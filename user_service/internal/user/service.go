@@ -9,13 +9,15 @@ import (
 var _ Service = &service{}
 
 type service struct {
+	cache   Cache
 	storage Storage
 	logger  logging.Logger
 }
 
-func NewService(userStorage Storage, logger logging.Logger) (Service, error) {
+func NewService(userStorage Storage, userCache Cache, logger logging.Logger) (Service, error) {
 	return &service{
 		storage: userStorage,
+		cache:   userCache,
 		logger:  logger,
 	}, nil
 }
@@ -44,6 +46,7 @@ func (s service) CreateByPhone(ctx context.Context, dto CreateByPhoneDTO) (strin
 	return userID, nil
 
 }
+
 func (s service) CreateByVk(ctx context.Context, dto CreateByVkDTO) (string, error) {
 	return "", nil
 }

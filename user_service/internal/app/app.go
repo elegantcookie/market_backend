@@ -16,7 +16,9 @@ import (
 	"user_service/internal/config"
 	"user_service/internal/user"
 	"user_service/internal/user/db"
+	"user_service/internal/user/rcache"
 	"user_service/pkg/client/mongodb"
+	"user_service/pkg/client/redis"
 	"user_service/pkg/logging"
 	"user_service/pkg/metrics"
 )
@@ -46,8 +48,11 @@ func NewApp(cfg *config.Config, logger *logging.Logger) (App, error) {
 		panic(err)
 	}
 
+	redisClient, err := redis.NewClient()
+
+	cache := rcache.NewCache(redisClient, logger)
 	storage := db.NewStorage(mongodbClient, "users", logger)
-	service, err := user.NewService(storage, *logger)
+	service, err := user.NewService(storage, cache, *logger)
 	if err != nil {
 		panic(err)
 	}
