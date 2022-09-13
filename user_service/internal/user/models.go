@@ -1,5 +1,11 @@
 package user
 
+import (
+	"math/rand"
+	"strconv"
+	"time"
+)
+
 type User struct {
 	ID            string `json:"id" bson:"_id,omitempty"`
 	Name          string `json:"name" bson:"name"`
@@ -63,6 +69,15 @@ func NewUserByVkID(dto CreateByVkDTO) User {
 		City:          "",
 		PhoneApproved: true,
 	}
+}
+
+func generateVerificationCode(n int) string {
+	rand.Seed(time.Now().Unix())
+	str := ""
+	for i := 0; i < n; i++ {
+		str += strconv.Itoa(rand.Int() % 10)
+	}
+	return str
 }
 
 //func (u *User) CheckPhoneToken(password string) error {

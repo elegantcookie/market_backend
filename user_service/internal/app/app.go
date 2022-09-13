@@ -49,7 +49,10 @@ func NewApp(cfg *config.Config, logger *logging.Logger) (App, error) {
 	}
 
 	redisClient, err := redis.NewClient()
-
+	if err != nil {
+		panic(err)
+	}
+	logger.Infof("redis client: %+v\nis null: %v", redisClient, redisClient == nil)
 	cache := rcache.NewCache(redisClient, logger)
 	storage := db.NewStorage(mongodbClient, "users", logger)
 	service, err := user.NewService(storage, cache, *logger)

@@ -12,7 +12,7 @@ definitions:
     properties:
       phone_number:
         type: string
-      phone_token:
+      verification_code:
         type: string
     type: object
 info:
@@ -39,6 +39,28 @@ paths:
           schema:
             $ref: '#/definitions/apperror.AppError'
       summary: Create user by phone number and token
+      tags:
+      - Users
+  /api/v1/users/send_verification/{phone_number}:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: phone number where the code will be sent
+        in: path
+        name: phone_number
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ""
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/apperror.AppError'
+      summary: Sends verification code by phone number
       tags:
       - Users
   /userapi/heartbeat:

@@ -9,6 +9,7 @@ import (
 type Client struct {
 	TwilioClient *twilio.RestClient
 	ServiceSID   string
+	FromPhone    string
 }
 
 var instance *Client
@@ -25,8 +26,8 @@ func GetClient() *Client {
 				Password: password,
 			}),
 			ServiceSID: cfg.Twilio.ServiceSID,
+			FromPhone:  cfg.Twilio.TwilioPhone,
 		}
 	})
 	return instance
-
 }

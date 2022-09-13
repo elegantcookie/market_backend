@@ -4,6 +4,7 @@
 *.dll
 *.so
 *.dylib
+.env
 mongo-volume
 
 # Test binary, built with `go test -c`

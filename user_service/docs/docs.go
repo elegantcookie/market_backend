@@ -52,6 +52,40 @@ const docTemplate = `{
                 }
             }
         },
+        "/api/v1/users/send_verification/{phone_number}": {
+            "get": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Sends verification code by phone number",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "phone number where the code will be sent",
+                        "name": "phone_number",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": ""
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/apperror.AppError"
+                        }
+                    }
+                }
+            }
+        },
         "/userapi/heartbeat": {
             "get": {
                 "tags": [
@@ -90,7 +124,7 @@ const docTemplate = `{
                 "phone_number": {
                     "type": "string"
                 },
-                "phone_token": {
+                "verification_code": {
                     "type": "string"
                 }
             }

@@ -27,9 +27,10 @@ type Config struct {
 		AuthDB   string `env:"AUTH_DB"`
 	}
 	Twilio struct {
-		AccountSID string `env:"TWILIO_ACCOUNT_SID"`
-		AuthToken  string `env:"TWILIO_AUTH_TOKEN"`
-		ServiceSID string `env:"VERIFY_SERVICE_SID"`
+		TwilioPhone string `env:"FROM_PHONE"`
+		AccountSID  string `env:"TWILIO_ACCOUNT_SID"`
+		AuthToken   string `env:"TWILIO_AUTH_TOKEN"`
+		ServiceSID  string `env:"VERIFY_SERVICE_SID"`
 	}
 }
 

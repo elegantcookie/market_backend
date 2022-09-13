@@ -3,7 +3,7 @@ package user
 import (
 	"context"
 	"fmt"
-	openapi "github.com/twilio/twilio-go/rest/verify/v2"
+	openapi "github.com/twilio/twilio-go/rest/api/v2010"
 	"user_service/pkg/client/twilio"
 	"user_service/pkg/logging"
 )
@@ -25,7 +25,8 @@ func NewService(userStorage Storage, userCache Cache, logger logging.Logger) (Se
 }
 
 type Service interface {
-	CreateByPhone(ctx context.Context, dto CreateByPhoneDTO) (string, error)
+	SignInByPhone(ctx context.Context, dto CreateByPhoneDTO) (string, error)
+	SendCode(ctx context.Context, phoneNumber string) error
 	CreateByVk(ctx context.Context, dto CreateByVkDTO) (string, error)
 	GetAll(ctx context.Context) ([]User, error)
 	GetById(ctx context.Context, uuid string) (User, error)
@@ -34,19 +35,16 @@ type Service interface {
 	Delete(ctx context.Context, uuid string) error
 }
 
-func (s service) CreateByPhone(ctx context.Context, dto CreateByPhoneDTO) (string, error) {
-	params := &openapi.CreateVerificationCheckParams{}
-	params.SetTo(dto.PhoneNumber)
-	params.SetCode(dto.VerificationCode)
-
-	client := twilio.GetClient()
-	resp, err := client.TwilioClient.VerifyV2.CreateVerificationCheck(client.ServiceSID, params)
+func (s service) SignInByPhone(ctx context.Context, dto CreateByPhoneDTO) (string, error) {
+	val, err := s.cache.Get(ctx, dto.PhoneNumber)
 	if err != nil {
 		return "", fmt.Errorf("failed to create verification check: %v", err)
 	}
-	if *resp.Status != twilioStatusApproved {
-		return "", fmt.Errorf("wrong code")
+	if val != dto.VerificationCode {
+		return "", fmt.Errorf("wrong code, right one: %s", val)
 	}
+
+	// TODO check if there is an account with existing number, then just return 200
 	user := NewUserByPhone(dto)
 	userID, err := s.storage.Create(ctx, user)
 	if err != nil {
@@ -58,15 +56,31 @@ func (s service) CreateByPhone(ctx context.Context, dto CreateByPhoneDTO) (strin
 }
 
 func (s service) SendCode(ctx context.Context, phoneNumber string) error {
-	params := &openapi.CreateVerificationParams{}
-	params.SetTo(phoneNumber)
-	params.SetChannel("sms")
+	s.logger.Info("SEND CODE SERVICE")
+
 	client := twilio.GetClient()
-	resp, err := client.TwilioClient.VerifyV2.CreateVerification(client.ServiceSID, params)
+	s.logger.Info("SET UP CLIENT")
+
+	params := &openapi.CreateMessageParams{}
+	params.SetTo(phoneNumber)
+	params.SetFrom(client.FromPhone)
+
+	code := generateVerificationCode(6)
+	message := fmt.Sprintf(verificationMessage, code)
+
+	params.SetBody(message)
+
+	resp, err := client.TwilioClient.Api.CreateMessage(params)
 	if err != nil {
+		s.logger.Infof("failed to create verification: %v", err)
 		return fmt.Errorf("failed to create verification: %v", err)
 	}
-	s.logger.Infof("Sent notification: %v", resp)
+
+	err = s.cache.Set(ctx, phoneNumber, code, deleteRegisterNumberTime)
+	if err != nil {
+		return err
+	}
+	s.logger.Infof("Sent notification: %+v", resp)
 	return nil
 }
 

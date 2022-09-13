@@ -6,6 +6,10 @@ services:
       - "10002:10002"
     environment:
       - PORT=10002
+      - FROM_PHONE=${FROM_PHONE}
+      - TWILIO_ACCOUNT_SID=${TWILIO_ACCOUNT_SID}
+      - TWILIO_AUTH_TOKEN=${TWILIO_AUTH_TOKEN}
+      - VERIFY_SERVICE_SID=${VERIFY_SERVICE_SID}
   mongodb:
     image: 'mongo:5'
     restart: always
@@ -14,4 +18,4 @@ services:
   redis:
     image: redis
     ports:
-      - 6379:6379
+      - "6379:6379"

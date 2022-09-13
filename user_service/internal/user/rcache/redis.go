@@ -22,11 +22,13 @@ func (c cache) Set(ctx context.Context, key, val string, expiration time.Duratio
 	return nil
 }
 func (c cache) Get(ctx context.Context, key string) (string, error) {
-	err := c.client.Get(ctx, key).Err()
+	get := c.client.Get(ctx, key)
+	err := get.Err()
 	if err != nil {
 		return "", fmt.Errorf("failed to get value: %v", err)
 	}
-	return "", nil
+	val := get.Val()
+	return val, nil
 }
 func (c cache) Del(ctx context.Context, key string) error {
 	err := c.client.Del(ctx, key).Err()
