@@ -1,10 +1,5 @@
 package user
 
-import (
-	"fmt"
-	"golang.org/x/crypto/bcrypt"
-)
-
 type User struct {
 	ID            string `json:"id" bson:"_id,omitempty"`
 	Name          string `json:"name" bson:"name"`
@@ -17,7 +12,7 @@ type User struct {
 	LastOnline    int64  `json:"last_online" bson:"last_online"`
 	//AverageRating int    `json:"average_rating" bson:"average_rating"`
 	//RateCount     int    `json:"rate_count" bson:"rate_count"`
-	PhoneToken string `json:"-" bson:"phone_token,omitempty"`
+	//PhoneToken string `json:"-" bson:"phone_token,omitempty"`
 }
 
 type UpdateUserDTO struct {
@@ -34,8 +29,8 @@ type UpdateUserDTO struct {
 }
 
 type CreateByPhoneDTO struct {
-	PhoneNumber string `json:"phone_number"`
-	PhoneToken  string `json:"phone_token"`
+	PhoneNumber      string `json:"phone_number"`
+	VerificationCode string `json:"verification_code"`
 }
 
 type CreateByVkDTO struct {
@@ -54,7 +49,7 @@ func NewUserByPhone(dto CreateByPhoneDTO) User {
 		VkID:          "",
 		City:          "",
 		PhoneApproved: true,
-		PhoneToken:    dto.PhoneToken,
+		//PhoneToken:    dto.PhoneToken,
 	}
 }
 
@@ -70,27 +65,27 @@ func NewUserByVkID(dto CreateByVkDTO) User {
 	}
 }
 
-func (u *User) CheckPhoneToken(password string) error {
-	err := bcrypt.CompareHashAndPassword([]byte(u.PhoneNumber), []byte(password))
-	if err != nil {
-		return fmt.Errorf("phone token does not match")
-	}
-	return nil
-}
-
-func (u *User) GeneratePhoneTokenHash() error {
-	phoneToken, err := generatePhoneTokenHash(u.PhoneNumber)
-	if err != nil {
-		return err
-	}
-	u.PhoneNumber = phoneToken
-	return nil
-}
-
-func generatePhoneTokenHash(token string) (string, error) {
-	hash, err := bcrypt.GenerateFromPassword([]byte(token), bcrypt.MinCost)
-	if err != nil {
-		return "", fmt.Errorf("failed to hash token due to error %w", err)
-	}
-	return string(hash), nil
-}
+//func (u *User) CheckPhoneToken(password string) error {
+//	err := bcrypt.CompareHashAndPassword([]byte(u.PhoneNumber), []byte(password))
+//	if err != nil {
+//		return fmt.Errorf("phone token does not match")
+//	}
+//	return nil
+//}
+//
+//func (u *User) GeneratePhoneTokenHash() error {
+//	phoneToken, err := generatePhoneTokenHash(u.PhoneNumber)
+//	if err != nil {
+//		return err
+//	}
+//	u.PhoneNumber = phoneToken
+//	return nil
+//}
+//
+//func generatePhoneTokenHash(token string) (string, error) {
+//	hash, err := bcrypt.GenerateFromPassword([]byte(token), bcrypt.MinCost)
+//	if err != nil {
+//		return "", fmt.Errorf("failed to hash token due to error %w", err)
+//	}
+//	return string(hash), nil
+//}

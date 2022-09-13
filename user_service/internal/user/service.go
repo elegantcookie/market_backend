@@ -3,6 +3,8 @@ package user
 import (
 	"context"
 	"fmt"
+	openapi "github.com/twilio/twilio-go/rest/verify/v2"
+	"user_service/pkg/client/twilio"
 	"user_service/pkg/logging"
 )
 
@@ -33,11 +35,19 @@ type Service interface {
 }
 
 func (s service) CreateByPhone(ctx context.Context, dto CreateByPhoneDTO) (string, error) {
-	user := NewUserByPhone(dto)
-	err := user.GeneratePhoneTokenHash()
+	params := &openapi.CreateVerificationCheckParams{}
+	params.SetTo(dto.PhoneNumber)
+	params.SetCode(dto.VerificationCode)
+
+	client := twilio.GetClient()
+	resp, err := client.TwilioClient.VerifyV2.CreateVerificationCheck(client.ServiceSID, params)
 	if err != nil {
-		return "", fmt.Errorf("failed to generate phone token hash due to: %v", err)
+		return "", fmt.Errorf("failed to create verification check: %v", err)
 	}
+	if *resp.Status != twilioStatusApproved {
+		return "", fmt.Errorf("wrong code")
+	}
+	user := NewUserByPhone(dto)
 	userID, err := s.storage.Create(ctx, user)
 	if err != nil {
 		return "", fmt.Errorf("failed to create user due to: %v", err)
@@ -45,6 +55,19 @@ func (s service) CreateByPhone(ctx context.Context, dto CreateByPhoneDTO) (strin
 
 	return userID, nil
 
+}
+
+func (s service) SendCode(ctx context.Context, phoneNumber string) error {
+	params := &openapi.CreateVerificationParams{}
+	params.SetTo(phoneNumber)
+	params.SetChannel("sms")
+	client := twilio.GetClient()
+	resp, err := client.TwilioClient.VerifyV2.CreateVerification(client.ServiceSID, params)
+	if err != nil {
+		return fmt.Errorf("failed to create verification: %v", err)
+	}
+	s.logger.Infof("Sent notification: %v", resp)
+	return nil
 }
 
 func (s service) CreateByVk(ctx context.Context, dto CreateByVkDTO) (string, error) {
