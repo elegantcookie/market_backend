@@ -22,6 +22,7 @@ type User struct {
 }
 
 type UpdateUserDTO struct {
+	ID            string `json:"id" bson:"_id,omitempty"`
 	Name          string `json:"name" bson:"name"`
 	Surname       string `json:"surname" bson:"surname"`
 	Email         string `json:"email,omitempty" bson:"email"`
@@ -44,6 +45,19 @@ type CreateByVkDTO struct {
 	Surname     string `json:"surname"`
 	VkID        string `json:"vk_id,omitempty"`
 	PhoneNumber string `json:"phone_number,omitempty"`
+}
+
+func NewUserFromUpdateDTO(dto UpdateUserDTO) User {
+	return User{
+		Name:          dto.Name,
+		Surname:       dto.Surname,
+		Email:         dto.Email,
+		PhoneNumber:   dto.PhoneNumber,
+		VkID:          dto.VkID,
+		City:          dto.City,
+		PhoneApproved: dto.PhoneApproved,
+		LastOnline:    dto.LastOnline,
+	}
 }
 
 func NewUserByPhone(dto CreateByPhoneDTO) User {
@@ -71,6 +85,7 @@ func NewUserByVkID(dto CreateByVkDTO) User {
 	}
 }
 
+// Returns string code with n digits
 func generateVerificationCode(n int) string {
 	rand.Seed(time.Now().Unix())
 	str := ""
