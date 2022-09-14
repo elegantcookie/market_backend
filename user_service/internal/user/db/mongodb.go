@@ -32,7 +32,7 @@ func (d *db) Create(ctx context.Context, user user.User) (string, error) {
 func (d *db) FindById(ctx context.Context, id string) (u user.User, err error) {
 	oid, err := primitive.ObjectIDFromHex(id)
 	if err != nil {
-		return u, fmt.Errorf("failed to convert hex to objectID, hex: %s", id)
+		return u, fmt.Errorf("failed to convert hex to objectID, hex: %s. error: %v", id, err)
 	}
 	filter := bson.M{"_id": oid}
 	result := d.collection.FindOne(ctx, filter)
@@ -50,7 +50,7 @@ func (d *db) FindById(ctx context.Context, id string) (u user.User, err error) {
 }
 
 func (d *db) FindByNumber(ctx context.Context, number string) (u user.User, err error) {
-	filter := bson.M{"number": number}
+	filter := bson.M{"phone_number": number}
 	result := d.collection.FindOne(ctx, filter)
 	if result.Err() != nil {
 		if errors.Is(result.Err(), mongo.ErrNoDocuments) {
