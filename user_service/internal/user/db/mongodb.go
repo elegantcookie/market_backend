@@ -7,6 +7,7 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
+	"user_service/internal/apperror"
 	"user_service/internal/user"
 	"user_service/pkg/logging"
 )
@@ -37,7 +38,7 @@ func (d *db) FindById(ctx context.Context, id string) (u user.User, err error) {
 	result := d.collection.FindOne(ctx, filter)
 	if result.Err() != nil {
 		if errors.Is(result.Err(), mongo.ErrNoDocuments) {
-			// TODO ErrEntityNotFound
+			return u, apperror.ErrNotFound
 		}
 		return u, fmt.Errorf("failed to find one user by id: %s due to error: %v", id, result.Err())
 	}
@@ -53,7 +54,7 @@ func (d *db) FindByNumber(ctx context.Context, number string) (u user.User, err 
 	result := d.collection.FindOne(ctx, filter)
 	if result.Err() != nil {
 		if errors.Is(result.Err(), mongo.ErrNoDocuments) {
-			// TODO ErrEntityNotFound
+			return u, apperror.ErrNotFound
 		}
 		return u, fmt.Errorf("failed to find one user by number: %s due to error: %v", number, result.Err())
 	}
