@@ -15,9 +15,110 @@ definitions:
       verification_code:
         type: string
     type: object
+  user.UpdateUserDTO:
+    properties:
+      city:
+        type: string
+      email:
+        type: string
+      id:
+        type: string
+      last_online:
+        type: integer
+      name:
+        type: string
+      phone_approved:
+        type: boolean
+      phone_number:
+        type: string
+      surname:
+        type: string
+      vk_id:
+        type: string
+    type: object
 info:
   contact: {}
 paths:
+  /api/v1/users/del/id/{id}:
+    delete:
+      consumes:
+      - application/json
+      parameters:
+      - description: User ID
+        in: path
+        name: user_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: ""
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/apperror.AppError'
+      summary: Deletes user by id
+      tags:
+      - Users
+  /api/v1/users/get/all:
+    get:
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ""
+        "400":
+          description: ""
+      summary: Returns data of all users
+      tags:
+      - Users
+  /api/v1/users/get/id/{id}:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ""
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/apperror.AppError'
+      summary: Returns user data by id
+      tags:
+      - Users
+  /api/v1/users/get/id/{phone_number}:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: Phone number
+        in: path
+        name: phone_number
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ""
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/apperror.AppError'
+      summary: Returns user data by phone number
+      tags:
+      - Users
   /api/v1/users/phone:
     post:
       consumes:
@@ -61,6 +162,29 @@ paths:
           schema:
             $ref: '#/definitions/apperror.AppError'
       summary: Sends verification code by phone number
+      tags:
+      - Users
+  /api/v1/users/upd/:
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: update user struct
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/user.UpdateUserDTO'
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: ""
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/apperror.AppError'
+      summary: Updates user data
       tags:
       - Users
   /userapi/heartbeat:
