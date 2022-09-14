@@ -14,6 +14,8 @@ type cache struct {
 	logger *logging.Logger
 }
 
+// TODO handle errors
+
 func (c cache) Set(ctx context.Context, key, val string, expiration time.Duration) error {
 	err := c.client.Set(ctx, key, val, expiration).Err()
 	if err != nil {
@@ -43,4 +45,5 @@ func NewCache(client *redis.Client, logger *logging.Logger) user.Cache {
 		client: client,
 		logger: logger,
 	}
+
 }
