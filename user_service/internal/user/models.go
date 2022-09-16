@@ -36,8 +36,8 @@ type UpdateUserDTO struct {
 }
 
 type CreateByPhoneDTO struct {
-	PhoneNumber      string `json:"phone_number"`
-	VerificationCode string `json:"verification_code"`
+	PhoneNumber      string `json:"phone_number" example:"+79999999999"`
+	VerificationCode string `json:"verification_code" example:"123321"`
 }
 
 type CreateByVkDTO struct {
