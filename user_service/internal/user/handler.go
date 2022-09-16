@@ -60,7 +60,9 @@ func (h *Handler) CreateUserByPhoneNumber(w http.ResponseWriter, r *http.Request
 	if err != nil {
 		return err
 	}
-	bytes, err := json.Marshal(userUUID)
+	tmp := make(map[string]string)
+	tmp["id"] = userUUID
+	bytes, err := json.Marshal(tmp)
 	if err != nil {
 		return fmt.Errorf("failed to marshal data: %v", err)
 	}
