@@ -140,6 +140,22 @@ const docTemplate = `{
                 }
             }
         },
+        "/api/v1/users/heartbeat": {
+            "get": {
+                "tags": [
+                    "Metrics"
+                ],
+                "summary": "Heartbeat metric",
+                "responses": {
+                    "204": {
+                        "description": ""
+                    },
+                    "400": {
+                        "description": ""
+                    }
+                }
+            }
+        },
         "/api/v1/users/phone": {
             "post": {
                 "consumes": [
@@ -245,22 +261,6 @@ const docTemplate = `{
                     }
                 }
             }
-        },
-        "/userapi/heartbeat": {
-            "get": {
-                "tags": [
-                    "Metrics"
-                ],
-                "summary": "Heartbeat metric",
-                "responses": {
-                    "204": {
-                        "description": ""
-                    },
-                    "400": {
-                        "description": ""
-                    }
-                }
-            }
         }
     },
     "definitions": {
@@ -282,10 +282,12 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "phone_number": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "+79999999999"
                 },
                 "verification_code": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "123321"
                 }
             }
         },
