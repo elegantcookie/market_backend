@@ -1,5 +1,18 @@
 version: "3.9"
 services:
+  reverse-proxy:
+    # The official v2.0 Traefik docker image
+    image: traefik:v2.0
+    # Enables the web UI and tells Traefik to listen to docker
+    command: --api.insecure=true --providers.docker
+    ports:
+      # The HTTP port
+      - "80:80"
+      # The Web UI (enabled by --api.insecure=true)
+      - "8081:8080"
+    volumes:
+      # So that Traefik can listen to the Docker events
+      - /var/run/docker.sock:/var/run/docker.sock
   user_service:
     build: ./user_service
     ports:
@@ -10,6 +23,8 @@ services:
       - TWILIO_ACCOUNT_SID=${TWILIO_ACCOUNT_SID}
       - TWILIO_AUTH_TOKEN=${TWILIO_AUTH_TOKEN}
       - VERIFY_SERVICE_SID=${VERIFY_SERVICE_SID}
+    labels:
+      - "traefik.http.routers.user_service.rule=Host(`localhost`)"
   mongodb:
     image: 'mongo:5'
     restart: always
