@@ -5,7 +5,7 @@ import (
 	"net/http"
 )
 
-const HeartbeatURL = "/userapi/heartbeat"
+const HeartbeatURL = "/api/v1/users/heartbeat"
 
 type Handler struct {
 }
@@ -19,7 +19,7 @@ func (h *Handler) Register(router *httprouter.Router) {
 // @Tags Metrics
 // @Success 204
 // @Failure 400
-// @Router /userapi/heartbeat [get]
+// @Router /api/v1/users/heartbeat [get]
 func (h *Handler) Heartbeat(w http.ResponseWriter, r *http.Request) {
 	// Check if the server is up
 	w.WriteHeader(204)
