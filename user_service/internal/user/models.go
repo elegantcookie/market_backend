@@ -25,7 +25,7 @@ type UpdateUserDTO struct {
 	ID            string `json:"id" bson:"_id,omitempty"`
 	Name          string `json:"name" bson:"name"`
 	Surname       string `json:"surname" bson:"surname"`
-	Email         string `json:"email,omitempty" bson:"email"`
+	Email         string `json:"email" bson:"email"`
 	PhoneNumber   string `json:"phone_number" bson:"phone_number"`
 	VkID          string `json:"vk_id" bson:"vk_id"`
 	City          string `json:"city" bson:"city"`
