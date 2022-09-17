@@ -10,9 +10,9 @@ type User struct {
 	ID            string `json:"id" bson:"_id,omitempty"`
 	Name          string `json:"name" bson:"name"`
 	Surname       string `json:"surname" bson:"surname"`
-	Email         string `json:"email,omitempty" bson:"email"`
-	PhoneNumber   string `json:"phone_number,omitempty" bson:"phone_number"`
-	VkID          string `json:"vk_id,omitempty" bson:"vk_id"`
+	Email         string `json:"email" bson:"email"`
+	PhoneNumber   string `json:"phone_number" bson:"phone_number"`
+	VkID          string `json:"vk_id" bson:"vk_id"`
 	City          string `json:"city" bson:"city"`
 	PhoneApproved bool   `json:"phone_approved" bson:"phone_approved"`
 	LastOnline    int64  `json:"last_online" bson:"last_online"`
@@ -26,8 +26,8 @@ type UpdateUserDTO struct {
 	Name          string `json:"name" bson:"name"`
 	Surname       string `json:"surname" bson:"surname"`
 	Email         string `json:"email,omitempty" bson:"email"`
-	PhoneNumber   string `json:"phone_number,omitempty" bson:"phone_number"`
-	VkID          string `json:"vk_id,omitempty" bson:"vk_id"`
+	PhoneNumber   string `json:"phone_number" bson:"phone_number"`
+	VkID          string `json:"vk_id" bson:"vk_id"`
 	City          string `json:"city" bson:"city"`
 	PhoneApproved bool   `json:"phone_approved" bson:"phone_approved"`
 	LastOnline    int64  `json:"last_online" bson:"last_online"`
@@ -43,8 +43,8 @@ type CreateByPhoneDTO struct {
 type CreateByVkDTO struct {
 	Name        string `json:"name"`
 	Surname     string `json:"surname"`
-	VkID        string `json:"vk_id,omitempty"`
-	PhoneNumber string `json:"phone_number,omitempty"`
+	VkID        string `json:"vk_id"`
+	PhoneNumber string `json:"phone_number"`
 }
 
 func NewUserFromUpdateDTO(dto UpdateUserDTO) User {
