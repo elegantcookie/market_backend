@@ -69,6 +69,7 @@ func NewUserByPhone(dto CreateByPhoneDTO) User {
 		VkID:          "",
 		City:          "",
 		PhoneApproved: true,
+		LastOnline:    time.Now().Unix(),
 		//PhoneToken:    dto.PhoneToken,
 	}
 }
@@ -82,6 +83,7 @@ func NewUserByVkID(dto CreateByVkDTO) User {
 		VkID:          dto.VkID,
 		City:          "",
 		PhoneApproved: true,
+		LastOnline:    time.Now().Unix(),
 	}
 }
 
