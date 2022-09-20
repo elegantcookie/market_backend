@@ -41,10 +41,18 @@ type CreateByPhoneDTO struct {
 }
 
 type CreateByVkDTO struct {
-	Name        string `json:"name"`
-	Surname     string `json:"surname"`
-	VkID        string `json:"vk_id"`
 	PhoneNumber string `json:"phone_number"`
+	VkToken     string `json:"vk_token"`
+}
+type VkCheckTokenDTO struct {
+	Response VkCheckTokenValue `json:"response"`
+}
+
+type VkCheckTokenValue struct {
+	Date    int64 `json:"date"`
+	Expire  int64 `json:"expire"`
+	Success int   `json:"success"`
+	UserID  int   `json:"user_id"`
 }
 
 func NewUserFromUpdateDTO(dto UpdateUserDTO) User {
@@ -62,26 +70,15 @@ func NewUserFromUpdateDTO(dto UpdateUserDTO) User {
 
 func NewUserByPhone(dto CreateByPhoneDTO) User {
 	return User{
-		Name:          "",
-		Surname:       "",
-		Email:         "",
 		PhoneNumber:   dto.PhoneNumber,
-		VkID:          "",
-		City:          "",
 		PhoneApproved: true,
 		LastOnline:    time.Now().Unix(),
-		//PhoneToken:    dto.PhoneToken,
 	}
 }
 
 func NewUserByVkID(dto CreateByVkDTO) User {
 	return User{
-		Name:          dto.Name,
-		Surname:       dto.Surname,
-		Email:         "",
 		PhoneNumber:   dto.PhoneNumber,
-		VkID:          dto.VkID,
-		City:          "",
 		PhoneApproved: true,
 		LastOnline:    time.Now().Unix(),
 	}
