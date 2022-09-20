@@ -50,7 +50,10 @@ func (d *db) FindById(ctx context.Context, id string) (u user.User, err error) {
 }
 
 func (d *db) FindByNumber(ctx context.Context, number string) (u user.User, err error) {
+	// creates a filter with unordered list where "phone_number" equals to {number}
 	filter := bson.M{"phone_number": number}
+
+	// returns first found result
 	result := d.collection.FindOne(ctx, filter)
 	if result.Err() != nil {
 		if errors.Is(result.Err(), mongo.ErrNoDocuments) {
@@ -60,6 +63,21 @@ func (d *db) FindByNumber(ctx context.Context, number string) (u user.User, err 
 	}
 	if err = result.Decode(&u); err != nil {
 		return u, fmt.Errorf("failed to decode user(number:%s) from DB due to error: %v", number, err)
+	}
+	return u, nil
+}
+
+func (d *db) FindByVkID(ctx context.Context, vkID string) (u user.User, err error) {
+	filter := bson.M{"vk_id": vkID}
+	result := d.collection.FindOne(ctx, filter)
+	if result.Err() != nil {
+		if errors.Is(result.Err(), mongo.ErrNoDocuments) {
+			return u, apperror.ErrNotFound
+		}
+		return u, fmt.Errorf("failed to find one user by vkID: %s due to error: %v", vkID, result.Err())
+	}
+	if err = result.Decode(&u); err != nil {
+		return u, fmt.Errorf("failed to decode user(vkID:%s) from DB due to error: %v", vkID, err)
 	}
 	return u, nil
 }
