@@ -17,6 +17,7 @@ type Handler struct {
 // Endpoints paths
 const (
 	createByPhoneNumberURL = "/api/v1/users/phone"
+	createByVkURL          = "/api/v1/users/vk"
 	sendVerificationURL    = "/api/v1/users/send_verification/:phone_number/"
 	getUsersURL            = "/api/v1/users/get/all"
 	getByIdURL             = "/api/v1/users/get/id/:id/"
@@ -28,6 +29,7 @@ const (
 // Register adds handler functions to endpoints
 func (h *Handler) Register(router *httprouter.Router) {
 	router.HandlerFunc(http.MethodPost, createByPhoneNumberURL, apperror.Middleware(h.CreateUserByPhoneNumber))
+	router.HandlerFunc(http.MethodPost, createByVkURL, apperror.Middleware(h.CreateUserByVk))
 	router.HandlerFunc(http.MethodGet, sendVerificationURL, apperror.Middleware(h.SendVerificationCode))
 	router.HandlerFunc(http.MethodGet, getByIdURL, apperror.Middleware(h.GetUserById))
 	router.HandlerFunc(http.MethodGet, getByPhoneNumberURL, apperror.Middleware(h.GetUserByPhoneNumber))
@@ -57,6 +59,39 @@ func (h *Handler) CreateUserByPhoneNumber(w http.ResponseWriter, r *http.Request
 	}
 
 	userUUID, err := h.UserService.SignInByPhone(r.Context(), crUser)
+	if err != nil {
+		return err
+	}
+	tmp := make(map[string]string)
+	tmp["id"] = userUUID
+	bytes, err := json.Marshal(tmp)
+	if err != nil {
+		return fmt.Errorf("failed to marshal data: %v", err)
+	}
+	w.Write(bytes)
+	return nil
+}
+
+// CreateUserByVk adds new user to db
+// @Summary Create user by phone number and token
+// @Accept json
+// @Produce json
+// @Param data body CreateByVkDTO true "structure holds data for user creation by vk"
+// @Tags Users
+// @Success 201
+// @Failure 400 {object} apperror.AppError
+// @Router /api/v1/users/vk [post]
+func (h *Handler) CreateUserByVk(w http.ResponseWriter, r *http.Request) error {
+	h.Logger.Info("CREATE USER")
+	w.Header().Set("Content-Type", "application/json")
+
+	var crUser CreateByVkDTO
+	defer r.Body.Close()
+	if err := json.NewDecoder(r.Body).Decode(&crUser); err != nil {
+		return apperror.BadRequestError("invalid JSON scheme. check swagger API")
+	}
+
+	userUUID, err := h.UserService.SignInByVk(r.Context(), crUser)
 	if err != nil {
 		return err
 	}
