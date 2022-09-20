@@ -68,7 +68,10 @@ func (d *db) FindByNumber(ctx context.Context, number string) (u user.User, err 
 }
 
 func (d *db) FindByVkID(ctx context.Context, vkID string) (u user.User, err error) {
+	// creates a filter with unordered list where "vk_id" equals to {vkID}
 	filter := bson.M{"vk_id": vkID}
+
+	// returns first found result
 	result := d.collection.FindOne(ctx, filter)
 	if result.Err() != nil {
 		if errors.Is(result.Err(), mongo.ErrNoDocuments) {
