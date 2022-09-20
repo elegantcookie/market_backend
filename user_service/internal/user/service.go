@@ -2,8 +2,13 @@ package user
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
 	"fmt"
+	"io"
+	"net/http"
+	"os"
+	"strconv"
 	"user_service/internal/apperror"
 	"user_service/pkg/logging"
 )
@@ -26,6 +31,7 @@ func NewService(userStorage Storage, userCache Cache, logger logging.Logger) (Se
 
 type Service interface {
 	SignInByPhone(ctx context.Context, dto CreateByPhoneDTO) (string, error)
+	SignInByVk(ctx context.Context, dto CreateByVkDTO) (string, error)
 	SendCode(ctx context.Context, phoneNumber string) (string, error)
 	CreateByVk(ctx context.Context, dto CreateByVkDTO) (string, error)
 	GetAll(ctx context.Context) ([]User, error)
@@ -60,7 +66,29 @@ func (s service) SignInByPhone(ctx context.Context, dto CreateByPhoneDTO) (strin
 	}
 
 	return userID, nil
+}
 
+func (s service) SignInByVk(ctx context.Context, dto CreateByVkDTO) (string, error) {
+
+	// Returns error if token is invalid
+	vkID, err := s.CheckVkToken(ctx, dto.VkToken)
+	if err != nil {
+		return "", err
+	}
+
+	// Returns id of the existing user if it is, instead of creating new one
+	if user, err := s.storage.FindByVkID(ctx, vkID); err == nil {
+		return user.ID, nil
+	}
+	// Returns id of a new user if it is not
+	user := NewUserByVkID(dto)
+	user.VkID = vkID
+	userID, err := s.storage.Create(ctx, user)
+	if err != nil {
+		return "", fmt.Errorf("failed to create user due to: %v", err)
+	}
+
+	return userID, nil
 }
 
 // For dev
@@ -78,6 +106,38 @@ func (s service) SendCode(ctx context.Context, phoneNumber string) (string, erro
 		return "", err
 	}
 	return message, nil
+}
+
+func (s service) CheckVkToken(ctx context.Context, token string) (string, error) {
+	var accessKey = os.Getenv("VK_ACCESS_TOKEN")
+	s.logger.Printf("VK_ACCESS_TOKEN: %s", accessKey)
+	url := fmt.Sprintf(checkTokenURL, token, accessKey, checkTokenVersion)
+	request, err := http.NewRequestWithContext(ctx, http.MethodGet, url, nil)
+	if err != nil {
+		return "", err
+	}
+	var client http.Client
+	response, err := client.Do(request)
+	if err != nil {
+		return "", err
+	}
+	if response == nil {
+		return "", fmt.Errorf("response is null")
+	}
+	if response.StatusCode != 200 {
+		body, _ := io.ReadAll(response.Body)
+		return "", fmt.Errorf("wrong status code: %d, body: %s", response.StatusCode, string(body))
+	}
+	var dto VkCheckTokenDTO
+	json.NewDecoder(response.Body).Decode(&dto)
+
+	if dto.Response.Success != 1 {
+		body, _ := io.ReadAll(response.Body)
+		s.logger.Printf("wrong response status code: %d, body: %s", dto.Response.Success, string(body))
+		return "", fmt.Errorf("wrong response status code: %d", dto.Response.Success)
+	}
+
+	return strconv.Itoa(dto.Response.UserID), nil
 }
 
 // For prod
