@@ -17,6 +17,13 @@ definitions:
         example: "123321"
         type: string
     type: object
+  user.CreateByVkDTO:
+    properties:
+      phone_number:
+        type: string
+      vk_token:
+        type: string
+    type: object
   user.UpdateUserDTO:
     properties:
       city:
@@ -197,6 +204,29 @@ paths:
           schema:
             $ref: '#/definitions/apperror.AppError'
       summary: Updates user data
+      tags:
+      - Users
+  /api/v1/users/vk:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: structure holds data for user creation by vk
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/user.CreateByVkDTO'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: ""
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/apperror.AppError'
+      summary: Create user by phone number and token
       tags:
       - Users
 swagger: "2.0"

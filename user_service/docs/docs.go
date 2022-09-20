@@ -261,6 +261,42 @@ const docTemplate = `{
                     }
                 }
             }
+        },
+        "/api/v1/users/vk": {
+            "post": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Create user by phone number and token",
+                "parameters": [
+                    {
+                        "description": "structure holds data for user creation by vk",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/user.CreateByVkDTO"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": ""
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/apperror.AppError"
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
@@ -288,6 +324,17 @@ const docTemplate = `{
                 "verification_code": {
                     "type": "string",
                     "example": "123321"
+                }
+            }
+        },
+        "user.CreateByVkDTO": {
+            "type": "object",
+            "properties": {
+                "phone_number": {
+                    "type": "string"
+                },
+                "vk_token": {
+                    "type": "string"
                 }
             }
         },
