@@ -5,15 +5,19 @@ services:
     ports:
       - "80:80"
 #      - "443:443"
-
     volumes:
-#      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
       - ./reverse_proxy/nginx.conf:/etc/nginx/nginx.conf/
 #      - "./config/:/config/"
+#    networks:
+#      - some-network
+
   user_service:
     build: ./user_service
     ports:
-      - "10002:80"
+      - "10002:10002"
+    expose:
+      - 10002
     environment:
       - PORT=10002
       - FROM_PHONE=${FROM_PHONE}
@@ -21,19 +25,28 @@ services:
       - TWILIO_AUTH_TOKEN=${TWILIO_AUTH_TOKEN}
       - VERIFY_SERVICE_SID=${VERIFY_SERVICE_SID}
       - VK_ACCESS_TOKEN=${VK_ACCESS_TOKEN}
-    labels:
-      - traefik.http.routers.user_service.rule=Host(`users.localhost`)
-      - traefik.http.services.user_service.loadbalancer.server.port=10002
+#    networks:
+#      - some-network
+#
+#  auth_service:
+#    build: ./auth_service
+#    ports:
+#      - "10001:80"
+#    environment:
+#      - PORT=10001
 
-  auth_service:
-    build: ./auth_service
+  api_gateway:
+    build: ./api_gateway
     ports:
-      - "10001:10001"
-    environment:
-      - PORT=10001
-    labels:
-      - traefik.http.routers.auth_service.rule=Host(`auth.localhost`)
-      - traefik.http.services.auth_service.loadbalancer.server.port=10001
+      - "10003:80"
+#    environment:
+#      - PORT=10003
+#    expose:
+#      - 10002
+#    networks:
+#      - some-network
+    depends_on:
+      - user_service
 
 
   mongodb:
@@ -41,8 +54,17 @@ services:
     restart: always
     volumes:
       - ./mongo-volume:/data/db
+#    networks:
+#      - some-network
+
   redis:
     image: redis
     ports:
       - "6379:6379"
     command: redis-server --appendonly yes --replica-read-only no
+#    networks:
+#      - some-network
+
+#networks:
+#  some-network:
+#    driver: bridge
