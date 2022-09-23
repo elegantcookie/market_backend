@@ -1,0 +1,43 @@
+#http:
+#  routers:
+#    users:
+#      rule: "Host(`users.localhost`) && PathPrefix(`/api/v1/users`)"
+#      middlewares: forward-auth
+#      service: users
+#
+#    traefik:
+#      rule: "Host(`traefik.docker.localhost`)"
+#      service: "api@internal"
+#      entryPoints:
+#        - "web"
+#
+#
+#  middlewares:
+#    # Define an authentication mechanism
+#    forward-auth:
+#      forwardAuth:
+#        address: http://localhost:10001/userapi/heartbeat
+#        trustForwardHeader: true
+#        authResponseHeaders:
+#          - "X-Auth-User"
+#          - "X-Secret"
+#        tls:
+#          insecureSkipVerify: true
+#
+#
+#  services:
+#    users:
+#      loadBalancer:
+#        healthCheck:
+#          path: /api/v1/users/heartbeat
+#          port: 10002
+#        servers:
+#          - url: http://localhost:10002
+#
+#    auth:
+#      loadBalancer:
+#        healthCheck:
+#          path: /userapi/heartbeat
+#          port: 10001
+#        servers:
+#          - url: http://auth.localhost:10001
