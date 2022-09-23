@@ -1,0 +1,28 @@
+
+entryPoints:
+  web:
+    address: ":80"
+  websecure:
+    address: ":443"
+  traefik:
+    address: "8081"
+  users:
+    address: ":10002"
+    http:
+      middlewares:
+        - forward-auth
+  auth:
+    address: ":10001"
+    http:
+      middlewares:
+        - forward-auth
+
+api:
+  dashboard: true
+
+providers:
+  # Enable the file provider to define routers / middlewares / services in file
+  file:
+    directory: /config
+  docker:
+    {}
