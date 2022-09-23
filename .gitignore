@@ -6,7 +6,6 @@
 *.dylib
 .env
 mongo-volume
-traefik/log
 
 # Test binary, built with `go test -c`
 *.test
