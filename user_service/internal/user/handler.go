@@ -16,14 +16,14 @@ type Handler struct {
 
 // Endpoints paths
 const (
-	createByPhoneNumberURL = "/api/v1/users/phone"
-	createByVkURL          = "/api/v1/users/vk"
-	sendVerificationURL    = "/api/v1/users/send_verification/:phone_number/"
-	getUsersURL            = "/api/v1/users/get/all"
-	getByIdURL             = "/api/v1/users/get/id/:id/"
-	getByPhoneNumberURL    = "/api/v1/users/get/num/:phone_number/"
-	updateByIdURL          = "/api/v1/users/upd/"
-	deleteByIdURL          = "/api/v1/users/del/id/:id/"
+	createByPhoneNumberURL = "/api/v1/user_service/phone"
+	createByVkURL          = "/api/v1/user_service/vk"
+	sendVerificationURL    = "/api/v1/user_service/send_verification/:phone_number/"
+	getUsersURL            = "/api/v1/user_service/get/all"
+	getByIdURL             = "/api/v1/user_service/get/id/:id/"
+	getByPhoneNumberURL    = "/api/v1/user_service/get/num/:phone_number/"
+	updateByIdURL          = "/api/v1/user_service/upd/"
+	deleteByIdURL          = "/api/v1/user_service/del/id/:id/"
 )
 
 // Register adds handler functions to endpoints
@@ -47,7 +47,7 @@ func (h *Handler) Register(router *httprouter.Router) {
 // @Tags Users
 // @Success 201
 // @Failure 400 {object} apperror.AppError
-// @Router /api/v1/users/phone [post]
+// @Router /api/v1/user_service/phone [post]
 func (h *Handler) CreateUserByPhoneNumber(w http.ResponseWriter, r *http.Request) error {
 	h.Logger.Info("CREATE USER")
 	w.Header().Set("Content-Type", "application/json")
@@ -80,7 +80,7 @@ func (h *Handler) CreateUserByPhoneNumber(w http.ResponseWriter, r *http.Request
 // @Tags Users
 // @Success 201
 // @Failure 400 {object} apperror.AppError
-// @Router /api/v1/users/vk [post]
+// @Router /api/v1/user_service/vk [post]
 func (h *Handler) CreateUserByVk(w http.ResponseWriter, r *http.Request) error {
 	h.Logger.Info("CREATE USER")
 	w.Header().Set("Content-Type", "application/json")
@@ -113,7 +113,7 @@ func (h *Handler) CreateUserByVk(w http.ResponseWriter, r *http.Request) error {
 // @Tags Users
 // @Success 200
 // @Failure 400 {object} apperror.AppError
-// @Router /api/v1/users/send_verification/{phone_number} [get]
+// @Router /api/v1/user_service/send_verification/{phone_number} [get]
 func (h *Handler) SendVerificationCode(w http.ResponseWriter, r *http.Request) error {
 	h.Logger.Info("SEND CODE")
 	params := r.Context().Value(httprouter.ParamsKey).(httprouter.Params)
@@ -139,7 +139,7 @@ func (h *Handler) SendVerificationCode(w http.ResponseWriter, r *http.Request) e
 // @Tags Users
 // @Success 200
 // @Failure 400 {object} apperror.AppError
-// @Router /api/v1/users/get/id/{id} [get]
+// @Router /api/v1/user_service/get/id/{id} [get]
 func (h *Handler) GetUserById(w http.ResponseWriter, r *http.Request) error {
 	w.Header().Set("Content-Type", "application/json")
 
@@ -169,7 +169,7 @@ func (h *Handler) GetUserById(w http.ResponseWriter, r *http.Request) error {
 // @Tags Users
 // @Success 200
 // @Failure 400 {object} apperror.AppError
-// @Router /api/v1/users/get/id/{phone_number} [get]
+// @Router /api/v1/user_service/get/id/{phone_number} [get]
 func (h *Handler) GetUserByPhoneNumber(w http.ResponseWriter, r *http.Request) error {
 	w.Header().Set("Content-Type", "application/json")
 
@@ -192,13 +192,13 @@ func (h *Handler) GetUserByPhoneNumber(w http.ResponseWriter, r *http.Request) e
 }
 
 // GetUsers swaggo
-// @Summary Returns data of all users
+// @Summary Returns data of all user_service
 // @Accept json
 // @Produce json
 // @Tags Users
 // @Success 200
 // @Failure 400
-// @Router /api/v1/users/get/all [get]
+// @Router /api/v1/user_service/get/all [get]
 func (h *Handler) GetUsers(w http.ResponseWriter, r *http.Request) error {
 	w.Header().Set("Content-Type", "application/json")
 
@@ -225,7 +225,7 @@ func (h *Handler) GetUsers(w http.ResponseWriter, r *http.Request) error {
 // @Tags Users
 // @Success 204
 // @Failure 400 {object} apperror.AppError
-// @Router /api/v1/users/upd/ [put]
+// @Router /api/v1/user_service/upd/ [put]
 func (h *Handler) UpdateUser(w http.ResponseWriter, r *http.Request) error {
 	w.Header().Set("Content-Type", "application/json")
 
@@ -251,7 +251,7 @@ func (h *Handler) UpdateUser(w http.ResponseWriter, r *http.Request) error {
 // @Tags Users
 // @Success 204
 // @Failure 400 {object} apperror.AppError
-// @Router /api/v1/users/del/id/{id} [delete]
+// @Router /api/v1/user_service/del/id/{id} [delete]
 func (h *Handler) DeleteUser(w http.ResponseWriter, r *http.Request) error {
 	w.Header().Set("Content-Type", "application/json")
 

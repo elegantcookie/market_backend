@@ -81,7 +81,7 @@ paths:
           description: ""
         "400":
           description: ""
-      summary: Returns data of all users
+      summary: Returns data of all user_service
       tags:
       - Users
   /api/v1/users/get/id/{id}:

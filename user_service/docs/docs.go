@@ -16,7 +16,7 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
-        "/api/v1/users/del/id/{id}": {
+        "/api/v1/user_service/del/id/{id}": {
             "delete": {
                 "consumes": [
                     "application/json"
@@ -50,7 +50,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/v1/users/get/all": {
+        "/api/v1/user_service/get/all": {
             "get": {
                 "consumes": [
                     "application/json"
@@ -61,7 +61,7 @@ const docTemplate = `{
                 "tags": [
                     "Users"
                 ],
-                "summary": "Returns data of all users",
+                "summary": "Returns data of all user_service",
                 "responses": {
                     "200": {
                         "description": ""
@@ -72,7 +72,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/v1/users/get/id/{id}": {
+        "/api/v1/user_service/get/id/{id}": {
             "get": {
                 "consumes": [
                     "application/json"
@@ -106,7 +106,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/v1/users/get/id/{phone_number}": {
+        "/api/v1/user_service/get/id/{phone_number}": {
             "get": {
                 "consumes": [
                     "application/json"
@@ -140,7 +140,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/v1/users/heartbeat": {
+        "/api/v1/user_service/heartbeat": {
             "get": {
                 "tags": [
                     "Metrics"
@@ -156,7 +156,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/v1/users/phone": {
+        "/api/v1/user_service/phone": {
             "post": {
                 "consumes": [
                     "application/json"
@@ -192,7 +192,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/v1/users/send_verification/{phone_number}": {
+        "/api/v1/user_service/send_verification/{phone_number}": {
             "get": {
                 "consumes": [
                     "application/json"
@@ -226,7 +226,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/v1/users/upd/": {
+        "/api/v1/user_service/upd/": {
             "put": {
                 "consumes": [
                     "application/json"
@@ -262,7 +262,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/v1/users/vk": {
+        "/api/v1/user_service/vk": {
             "post": {
                 "consumes": [
                     "application/json"

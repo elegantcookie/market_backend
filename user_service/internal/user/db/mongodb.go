@@ -88,7 +88,7 @@ func (d *db) FindByVkID(ctx context.Context, vkID string) (u user.User, err erro
 func (d *db) FindAll(ctx context.Context) (users []user.User, err error) {
 	cursor, err := d.collection.Find(ctx, bson.M{})
 	if cursor.Err() != nil {
-		return users, fmt.Errorf("failed to find all users due to: %v", cursor.Err())
+		return users, fmt.Errorf("failed to find all user_service due to: %v", cursor.Err())
 	}
 	if err := cursor.All(ctx, &users); err != nil {
 		return users, fmt.Errorf("failed to read all documents from cursor")

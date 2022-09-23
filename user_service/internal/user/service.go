@@ -185,7 +185,7 @@ func (s service) CreateByVk(ctx context.Context, dto CreateByVkDTO) (string, err
 func (s service) GetAll(ctx context.Context) ([]User, error) {
 	users, err := s.storage.FindAll(ctx)
 	if err != nil {
-		return users, fmt.Errorf("failed to find users. error: %v", err)
+		return users, fmt.Errorf("failed to find user_service. error: %v", err)
 	}
 	return users, nil
 }

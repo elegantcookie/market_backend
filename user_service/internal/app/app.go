@@ -54,7 +54,7 @@ func NewApp(cfg *config.Config, logger *logging.Logger) (App, error) {
 	}
 	logger.Infof("redis client: %+v\nis null: %v", redisClient, redisClient == nil)
 	cache := rcache.NewCache(redisClient, logger)
-	storage := db.NewStorage(mongodbClient, "users", logger)
+	storage := db.NewStorage(mongodbClient, "user_service", logger)
 	service, err := user.NewService(storage, cache, *logger)
 	if err != nil {
 		panic(err)
