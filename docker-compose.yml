@@ -1,36 +1,19 @@
 version: "3.9"
 services:
   reverse-proxy:
-    # The official v2 Traefik docker image
-    image: traefik:v2.8
-    # Enables the web UI and tells Traefik to listen to docker
-    command: --api.insecure=true --providers.docker
-#      - --entrypoints.web.address=:80
-#      - --entrypoints.users.address=:10002
-#      - --entrypoints.auth.address=:10001
-#      - --entrypoints.websecure.address=:443
-#      - --api=true
-#      - --providers.docker=true
-#      - --providers.file.directory=/config/
+    image: nginx:latest
     ports:
       - "80:80"
-      - "443:443"
-    labels:
-      - "traefik.enable=true"
-
-      # Dashboard
-      - "traefik.http.routers.traefik.rule=Host(`traefik.docker.localhost`)"
-      - "traefik.http.routers.traefik.service=api@internal"
-#      - "traefik.http.routers.traefik.entrypoints=web"
+#      - "443:443"
 
     volumes:
-      - "/var/run/docker.sock:/var/run/docker.sock:ro"
-      - "./config/:/config/"
-#      - "traefik.yml:traefik.yml:ro"
+#      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+      - ./reverse_proxy/nginx.conf:/etc/nginx/nginx.conf/
+#      - "./config/:/config/"
   user_service:
     build: ./user_service
     ports:
-      - "10002:10002"
+      - "10002:80"
     environment:
       - PORT=10002
       - FROM_PHONE=${FROM_PHONE}
@@ -41,18 +24,6 @@ services:
     labels:
       - traefik.http.routers.user_service.rule=Host(`users.localhost`)
       - traefik.http.services.user_service.loadbalancer.server.port=10002
-      - "traefik.enable=true"
-#    labels:
-#      - "traefik.http.routers.users.entrypoints=users"
-#      - "traefik.http.routers.users.rule=Host(`users.localhost`) && PathPrefix(`/api/v1/users`)"
-#      - "traefik.http.routers.users.middlewares=forward-auth"
-#      - "traefik.http.services.users.loadbalancer.server.port=80"
-#      - "traefik.http.middlewares.forward-auth.forwardauth.trustForwardHeader=true"
-#      - "traefik.http.middlewares.forward-auth.forwardauth.address=http://auth.localhost:10001/userapi/heartbeat/"
-#      - "traefik.http.middlewares.forward-auth.forwardauth.authResponseHeaders=X-Forwarded-User, X-WebAuth-User"
-#      - "traefik.http.middlewares.forward-auth.forwardauth.tls.insecureSkipVerify=true"
-
-#      - "traefik.http.middlewares.auth.basicauth.users=user:$$2a$$12$$vjrn6ot8rZ55iRzx2T58q.r0HKQ0WkujVYK5jfftDo3L83aHO6ErW"
 
   auth_service:
     build: ./auth_service
@@ -63,12 +34,6 @@ services:
     labels:
       - traefik.http.routers.auth_service.rule=Host(`auth.localhost`)
       - traefik.http.services.auth_service.loadbalancer.server.port=10001
-
-  #    labels:
-#      - "traefik.enable=true"
-#      - "traefik.http.routers.auth.entrypoints=auth"
-#      - "traefik.http.routers.auth.rule=Host(`auth.localhost`)"
-
 
 
   mongodb:
