@@ -32,12 +32,13 @@ func (h *Handler) CreateUserByPhoneNumber(w http.ResponseWriter, r *http.Request
 	if err != nil {
 		return err
 	}
-	bytes, err := h.GatewayService.DoRequest(request)
+	data, err := h.GatewayService.DoRequest(request)
 	if err != nil {
 		return err
 	}
 	w.Header().Add("Content-Type", "application/json")
-	w.Write(bytes)
+	w.WriteHeader(data.StatusCode)
+	w.Write(data.Body)
 	return nil
 }
 func (h *Handler) CreateUserByVk(w http.ResponseWriter, r *http.Request) error {
@@ -46,12 +47,13 @@ func (h *Handler) CreateUserByVk(w http.ResponseWriter, r *http.Request) error {
 	if err != nil {
 		return err
 	}
-	bytes, err := h.GatewayService.DoRequest(request)
+	data, err := h.GatewayService.DoRequest(request)
 	if err != nil {
 		return err
 	}
 	w.Header().Add("Content-Type", "application/json")
-	w.Write(bytes)
+	w.WriteHeader(data.StatusCode)
+	w.Write(data.Body)
 	return nil
 }
 func (h *Handler) SendVerificationCode(w http.ResponseWriter, r *http.Request) error {
@@ -60,11 +62,12 @@ func (h *Handler) SendVerificationCode(w http.ResponseWriter, r *http.Request) e
 	if err != nil {
 		return err
 	}
-	bytes, err := h.GatewayService.DoRequest(request)
+	data, err := h.GatewayService.DoRequest(request)
 	if err != nil {
 		return err
 	}
-	w.Write(bytes)
+	w.WriteHeader(data.StatusCode)
+	w.Write(data.Body)
 	return nil
 }
 func (h *Handler) GetUserById(w http.ResponseWriter, r *http.Request) error {
@@ -73,12 +76,14 @@ func (h *Handler) GetUserById(w http.ResponseWriter, r *http.Request) error {
 	if err != nil {
 		return err
 	}
-	bytes, err := h.GatewayService.DoRequest(request)
+	data, err := h.GatewayService.DoRequest(request)
+
 	if err != nil {
 		return err
 	}
 	w.Header().Add("Content-Type", "application/json")
-	w.Write(bytes)
+	w.WriteHeader(data.StatusCode)
+	w.Write(data.Body)
 	return nil
 }
 func (h *Handler) GetUserByPhoneNumber(w http.ResponseWriter, r *http.Request) error {
@@ -87,12 +92,14 @@ func (h *Handler) GetUserByPhoneNumber(w http.ResponseWriter, r *http.Request) e
 	if err != nil {
 		return err
 	}
-	bytes, err := h.GatewayService.DoRequest(request)
+	data, err := h.GatewayService.DoRequest(request)
+
 	if err != nil {
 		return err
 	}
 	w.Header().Add("Content-Type", "application/json")
-	w.Write(bytes)
+	w.WriteHeader(data.StatusCode)
+	w.Write(data.Body)
 	return nil
 }
 func (h *Handler) GetUsers(w http.ResponseWriter, r *http.Request) error {
@@ -101,12 +108,14 @@ func (h *Handler) GetUsers(w http.ResponseWriter, r *http.Request) error {
 	if err != nil {
 		return err
 	}
-	bytes, err := h.GatewayService.DoRequest(request)
+	data, err := h.GatewayService.DoRequest(request)
+
 	if err != nil {
 		return err
 	}
 	w.Header().Add("Content-Type", "application/json")
-	w.Write(bytes)
+	w.WriteHeader(data.StatusCode)
+	w.Write(data.Body)
 	return nil
 }
 func (h *Handler) UpdateUser(w http.ResponseWriter, r *http.Request) error {
@@ -115,12 +124,14 @@ func (h *Handler) UpdateUser(w http.ResponseWriter, r *http.Request) error {
 	if err != nil {
 		return err
 	}
-	bytes, err := h.GatewayService.DoRequest(request)
+	data, err := h.GatewayService.DoRequest(request)
+
 	if err != nil {
 		return err
 	}
 	w.Header().Add("Content-Type", "application/json")
-	w.Write(bytes)
+	w.WriteHeader(data.StatusCode)
+	w.Write(data.Body)
 	return nil
 }
 func (h *Handler) DeleteUser(w http.ResponseWriter, r *http.Request) error {
@@ -129,11 +140,13 @@ func (h *Handler) DeleteUser(w http.ResponseWriter, r *http.Request) error {
 	if err != nil {
 		return err
 	}
-	bytes, err := h.GatewayService.DoRequest(request)
+	data, err := h.GatewayService.DoRequest(request)
+
 	if err != nil {
 		return err
 	}
 	w.Header().Add("Content-Type", "application/json")
-	w.Write(bytes)
+	w.WriteHeader(data.StatusCode)
+	w.Write(data.Body)
 	return nil
 }

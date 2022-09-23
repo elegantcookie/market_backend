@@ -4,6 +4,7 @@ import (
 	"api_gateway/pkg/logging"
 	"fmt"
 	"io"
+	"log"
 	"net/http"
 	"strings"
 )
@@ -16,7 +17,7 @@ type service struct {
 
 type Service interface {
 	CopyRequest(r *http.Request, dockerServiceName, servicePort string) (*http.Request, error)
-	DoRequest(r *http.Request) ([]byte, error)
+	DoRequest(r *http.Request) (*ResponseData, error)
 }
 
 func NewService(logger logging.Logger) Service {
@@ -34,7 +35,7 @@ func (s service) getURIWithPort(dockerServiceName, servicePort, requestURI strin
 
 func (s service) CopyRequest(r *http.Request, dockerServiceName, servicePort string) (*http.Request, error) {
 	url := s.getURIWithPort(dockerServiceName, servicePort, r.RequestURI)
-	if r.Method != http.MethodPost {
+	if r.Method == http.MethodGet {
 		request, err := http.NewRequestWithContext(r.Context(), http.MethodGet, url, nil)
 		if err != nil {
 			return nil, err
@@ -56,7 +57,7 @@ func (s service) CopyRequest(r *http.Request, dockerServiceName, servicePort str
 	return request, nil
 }
 
-func (s service) DoRequest(r *http.Request) ([]byte, error) {
+func (s service) DoRequest(r *http.Request) (data *ResponseData, err error) {
 	var client http.Client
 	response, err := client.Do(r)
 	if err != nil {
@@ -66,17 +67,11 @@ func (s service) DoRequest(r *http.Request) ([]byte, error) {
 		//log.Printf("Response is null")
 		return nil, fmt.Errorf("response is null")
 	}
-	//log.Printf("Status code: %d", response.StatusCode)
-	if response.StatusCode > 299 && response.StatusCode < 200 {
-		bytes, err := io.ReadAll(response.Body)
-		if err != nil {
-			return nil, err
-		}
-		return nil, fmt.Errorf("wrong status code: %d. body: %s", response.StatusCode, string(bytes))
-	}
+	log.Printf("Status code: %d", response.StatusCode)
 	bytes, err := io.ReadAll(response.Body)
 	if err != nil {
 		return nil, err
 	}
-	return bytes, nil
+	data = NewResponseData(bytes, response.StatusCode)
+	return data, nil
 }
