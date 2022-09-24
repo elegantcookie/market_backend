@@ -16,11 +16,7 @@ type Config struct {
 		Port       string `env:"PORT" env-default:"10001"`
 	}
 	AppConfig struct {
-		LogLevel  string `env:"LOG_LEVEL" env-default:"trace"`
-		AdminUser struct {
-			Email    string `env:"ADMIN_EMAIL" env-default:"admin"`
-			Password string `env:"ADMIN_PWD" env-default:"admin"`
-		}
+		LogLevel string `env:"LOG_LEVEL" env-default:"trace"`
 	}
 	Keys struct {
 		JWTSignKey string `env:"JWT_SIGN_KEY" env-default:"alsfjak12h4i1h2uas7f7241231o1u2io5u12asopua0w9812"`
