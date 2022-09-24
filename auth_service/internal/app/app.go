@@ -1,9 +1,8 @@
 package app
 
 import (
+	"auth_service/internal/auth"
 	"auth_service/internal/config"
-	"auth_service/internal/user"
-	"auth_service/internal/user/userapi"
 	"auth_service/pkg/logging"
 	"auth_service/pkg/metrics"
 	"context"
@@ -39,10 +38,9 @@ func NewApp(cfg *config.Config, logger *logging.Logger) (App, error) {
 	metricHandler := metrics.Handler{}
 	metricHandler.Register(router)
 
-	storage := userapi.NewStorage(logger)
-	service := user.NewService(storage, logger)
+	service := auth.NewService(logger)
 
-	usersHandler := user.Handler{
+	usersHandler := auth.Handler{
 		Logger:      logging.GetLogger(cfg.AppConfig.LogLevel),
 		AuthService: service,
 	}
