@@ -57,14 +57,15 @@ type VkCheckTokenValue struct {
 
 func NewUserFromUpdateDTO(dto UpdateUserDTO) User {
 	return User{
+		ID:            dto.ID,
 		Name:          dto.Name,
 		Surname:       dto.Surname,
 		Email:         dto.Email,
 		PhoneNumber:   dto.PhoneNumber,
 		VkID:          dto.VkID,
 		City:          dto.City,
-		PhoneApproved: dto.PhoneApproved,
-		LastOnline:    dto.LastOnline,
+		PhoneApproved: true,
+		LastOnline:    time.Now().Unix(),
 	}
 }
 

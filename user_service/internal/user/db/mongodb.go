@@ -97,6 +97,7 @@ func (d *db) FindAll(ctx context.Context) (users []user.User, err error) {
 }
 
 func (d *db) Update(ctx context.Context, user user.User) error {
+	d.logger.Printf("user: %+v", user)
 	objectID, err := primitive.ObjectIDFromHex(user.ID)
 	if err != nil {
 		return fmt.Errorf("failed to convert user ID to ObjectID. ID=%v", user.ID)
@@ -124,8 +125,7 @@ func (d *db) Update(ctx context.Context, user user.User) error {
 	}
 
 	if result.MatchedCount == 0 {
-		// TODO ErrEntityNotFound
-		return fmt.Errorf("not found")
+		return apperror.ErrNotFound
 	}
 
 	return nil

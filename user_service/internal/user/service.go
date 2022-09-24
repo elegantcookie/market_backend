@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"io"
 	"net/http"
 	"os"
 	"strconv"
@@ -33,7 +32,6 @@ type Service interface {
 	SignInByPhone(ctx context.Context, dto CreateByPhoneDTO) (string, error)
 	SignInByVk(ctx context.Context, dto CreateByVkDTO) (string, error)
 	SendCode(ctx context.Context, phoneNumber string) (string, error)
-	CreateByVk(ctx context.Context, dto CreateByVkDTO) (string, error)
 	GetAll(ctx context.Context) ([]User, error)
 	GetById(ctx context.Context, uuid string) (User, error)
 	GetByPhoneNumber(ctx context.Context, phoneNumber string) (User, error)
@@ -124,19 +122,18 @@ func (s service) CheckVkToken(ctx context.Context, token string) (string, error)
 	if response == nil {
 		return "", fmt.Errorf("response is null")
 	}
-	if response.StatusCode != 200 {
-		body, _ := io.ReadAll(response.Body)
-		return "", fmt.Errorf("wrong status code: %d, body: %s", response.StatusCode, string(body))
-	}
+
 	var dto VkCheckTokenDTO
-	json.NewDecoder(response.Body).Decode(&dto)
-
-	if dto.Response.Success != 1 {
-		body, _ := io.ReadAll(response.Body)
-		s.logger.Printf("wrong response status code: %d, body: %s", dto.Response.Success, string(body))
-		return "", fmt.Errorf("wrong response status code: %d", dto.Response.Success)
+	err = json.NewDecoder(response.Body).Decode(&dto)
+	if err != nil {
+		return "", err
 	}
-
+	//s.logger.Printf("%+v", dto)
+	// if vk api returned response.success != 1 then vk access token is invalid
+	if dto.Response.Success != 1 {
+		s.logger.Printf("wrong response code, success: %d", dto.Response.Success)
+		return "", fmt.Errorf("wrong response code, success: %d", dto.Response.Success)
+	}
 	return strconv.Itoa(dto.Response.UserID), nil
 }
 
@@ -179,9 +176,6 @@ func (s service) CheckVkToken(ctx context.Context, token string) (string, error)
 //	return nil
 //}
 
-func (s service) CreateByVk(ctx context.Context, dto CreateByVkDTO) (string, error) {
-	return "", nil
-}
 func (s service) GetAll(ctx context.Context) ([]User, error) {
 	users, err := s.storage.FindAll(ctx)
 	if err != nil {
