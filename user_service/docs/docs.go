@@ -27,7 +27,7 @@ const docTemplate = `{
                 "tags": [
                     "Users"
                 ],
-                "summary": "Deletes user by id",
+                "summary": "Deletes auth by id",
                 "parameters": [
                     {
                         "type": "string",
@@ -83,7 +83,7 @@ const docTemplate = `{
                 "tags": [
                     "Users"
                 ],
-                "summary": "Returns user data by id",
+                "summary": "Returns auth data by id",
                 "parameters": [
                     {
                         "type": "string",
@@ -117,7 +117,7 @@ const docTemplate = `{
                 "tags": [
                     "Users"
                 ],
-                "summary": "Returns user data by phone number",
+                "summary": "Returns auth data by phone number",
                 "parameters": [
                     {
                         "type": "string",
@@ -167,15 +167,15 @@ const docTemplate = `{
                 "tags": [
                     "Users"
                 ],
-                "summary": "Create user by phone number and token",
+                "summary": "Create auth by phone number and token",
                 "parameters": [
                     {
-                        "description": "structure holds data for user creation by phone",
+                        "description": "structure holds data for auth creation by phone",
                         "name": "data",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/user.CreateByPhoneDTO"
+                            "$ref": "#/definitions/auth.CreateByPhoneDTO"
                         }
                     }
                 ],
@@ -237,15 +237,15 @@ const docTemplate = `{
                 "tags": [
                     "Users"
                 ],
-                "summary": "Updates user data",
+                "summary": "Updates auth data",
                 "parameters": [
                     {
-                        "description": "update user struct",
+                        "description": "update auth struct",
                         "name": "data",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/user.UpdateUserDTO"
+                            "$ref": "#/definitions/auth.UpdateUserDTO"
                         }
                     }
                 ],
@@ -273,15 +273,15 @@ const docTemplate = `{
                 "tags": [
                     "Users"
                 ],
-                "summary": "Create user by phone number and token",
+                "summary": "Create auth by phone number and token",
                 "parameters": [
                     {
-                        "description": "structure holds data for user creation by vk",
+                        "description": "structure holds data for auth creation by vk",
                         "name": "data",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/user.CreateByVkDTO"
+                            "$ref": "#/definitions/auth.CreateByVkDTO"
                         }
                     }
                 ],
@@ -314,7 +314,7 @@ const docTemplate = `{
                 }
             }
         },
-        "user.CreateByPhoneDTO": {
+        "auth.CreateByPhoneDTO": {
             "type": "object",
             "properties": {
                 "phone_number": {
@@ -327,7 +327,7 @@ const docTemplate = `{
                 }
             }
         },
-        "user.CreateByVkDTO": {
+        "auth.CreateByVkDTO": {
             "type": "object",
             "properties": {
                 "phone_number": {
@@ -338,7 +338,7 @@ const docTemplate = `{
                 }
             }
         },
-        "user.UpdateUserDTO": {
+        "auth.UpdateUserDTO": {
             "type": "object",
             "properties": {
                 "city": {
