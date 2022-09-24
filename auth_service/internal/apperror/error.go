@@ -5,7 +5,8 @@ import (
 )
 
 var (
-	ErrNotFound = NewAppError(nil, "not found", "NS-000003", "")
+	ErrInvalidTokenSignature = NewAppError(nil, "wrong token", "NS-000004", "token signature is invalid")
+	ErrEmptyTokenString      = NewAppError(nil, "wrong token", "NS-000005", "token string is empty")
 )
 
 type AppError struct {
@@ -39,7 +40,7 @@ func (e *AppError) Marshal() []byte {
 }
 
 func BadRequestError(message string) *AppError {
-	return NewAppError(nil, message, "NS-000002", "some thing wrong with user data")
+	return NewAppError(nil, message, "NS-000002", "some thing wrong with auth data")
 }
 
 func systemError(developerMessage string) *AppError {
