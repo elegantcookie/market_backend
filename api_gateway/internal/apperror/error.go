@@ -3,8 +3,10 @@ package apperror
 import "encoding/json"
 
 var (
-	ErrNotFound   = NewAppError(nil, "not found", "NS-000003", "")
-	ErrWrongToken = NewAppError(nil, "wrong token", "NS-000004", "")
+	ErrNotFound        = NewAppError(nil, "not found", "NS-000003", "")
+	ErrWrongToken      = NewAppError(nil, "wrong token", "NS-000004", "")
+	ErrResponseIsNil   = NewAppError(nil, "response is null", "NS-000004", "")
+	ErrWrongStatusCode = NewAppError(nil, "wrong status code", "NS-000004", "")
 )
 
 type AppError struct {
@@ -38,7 +40,7 @@ func (e *AppError) Marshal() []byte {
 }
 
 func BadRequestError(message string) *AppError {
-	return NewAppError(nil, message, "NS-000002", "something wrong with user data")
+	return NewAppError(nil, message, "NS-000002", "something wrong with auth data")
 }
 
 func systemError(developerMessage string) *AppError {
