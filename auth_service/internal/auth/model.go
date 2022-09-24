@@ -1,4 +1,4 @@
-package user
+package auth
 
 type User struct {
 	ID            string   `json:"id" bson:"_id,omitempty"`
@@ -18,4 +18,13 @@ type ResponseUserDTO struct {
 	Username      string   `json:"username"`
 	HasFreeTicket bool     `json:"has_free_ticket"`
 	Tickets       []string `json:"tickets"`
+}
+
+type JWT struct {
+	AccessToken  string `json:"access_token"`
+	RefreshToken string `json:"refresh_token"`
+}
+
+type JWTDTO struct {
+	Token string `json:"token"`
 }

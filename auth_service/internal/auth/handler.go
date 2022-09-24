@@ -1,14 +1,17 @@
-package user
+package auth
 
 import (
 	"auth_service/internal/apperror"
 	"auth_service/pkg/logging"
-	"fmt"
+	"encoding/json"
 	"github.com/julienschmidt/httprouter"
 	"net/http"
 )
 
-const signInURL = "/api/auth/sign-in"
+const (
+	checkTokenURL  = "/api/v1/auth_service/token/check"
+	createTokenURL = "/api/v1/auth_service/token/create/:id"
+)
 
 type Handler struct {
 	Logger      logging.Logger
@@ -16,28 +19,37 @@ type Handler struct {
 }
 
 func (h *Handler) Register(router *httprouter.Router) {
-	router.HandlerFunc(http.MethodPost, signInURL, apperror.Middleware(h.SignIn))
+	router.HandlerFunc(http.MethodPost, checkTokenURL, apperror.Middleware(h.CheckToken))
+	router.HandlerFunc(http.MethodGet, createTokenURL, apperror.Middleware(h.CreateToken))
 }
 
-// Sign in
-// @Summary Sign in/sign up endpoint
-// @Accept json
-// @Produce json
-// @Tags Auth
-// @Success 201
-// @Failure 400
-// @Router /api/auth/sign-in [post]
-func (h *Handler) SignIn(w http.ResponseWriter, r *http.Request) error {
-	// HEADER, BODY etc.
-	h.Logger.Println("POST SIGN IN")
-	w.Header().Set("Content-Type", "application/json")
-
-	token, err := h.AuthService.SignIn(r.Context(), r.Body)
+func (h *Handler) CheckToken(w http.ResponseWriter, r *http.Request) error {
+	var dto JWTDTO
+	err := json.NewDecoder(r.Body).Decode(&dto)
 	if err != nil {
 		return err
 	}
-	w.Header().Set("Location", fmt.Sprintf("%s", signInURL))
-	w.Header().Add("Authorization", fmt.Sprintf("Bearer %s", token))
-	w.WriteHeader(http.StatusCreated)
+	err = h.AuthService.CheckToken(r.Context(), dto.Token)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (h *Handler) CreateToken(w http.ResponseWriter, r *http.Request) error {
+	h.Logger.Println("CREATE TOKEN")
+	params := r.Context().Value(httprouter.ParamsKey).(httprouter.Params)
+	userID := params.ByName("id")
+
+	tokens, err := h.AuthService.CreateToken(r.Context(), userID)
+	if err != nil {
+		return err
+	}
+
+	bytes, err := json.Marshal(&tokens)
+	if err != nil {
+		return err
+	}
+	w.Write(bytes)
 	return nil
 }
