@@ -9,5 +9,8 @@ const (
 	GetByPhoneNumberURL    = "/api/v1/user_service/get/num/:phone_number/"
 	UpdateByIdURL          = "/api/v1/user_service/upd/"
 	DeleteByIdURL          = "/api/v1/user_service/del/id/:id/"
-	Port                   = "10002"
+
+	//DocsURL                = "/api/v1/user_service/docs/"
+
+	Port = "10002"
 )

@@ -45,10 +45,13 @@ func (h *Handler) Register(router *httprouter.Router) {
 // @Produce json
 // @Param data body CreateByPhoneDTO true "structure holds data for user creation by phone"
 // @Tags Users
-// @Success 201
+// @Success 201 If new user has been signed in
+// @Success 200 If existing user has been signed in
 // @Failure 400 {object} apperror.AppError
 // @Router /api/v1/user_service/phone [post]
 func (h *Handler) CreateUserByPhoneNumber(w http.ResponseWriter, r *http.Request) error {
+	// TODO: refactor
+
 	h.Logger.Info("CREATE USER")
 	w.Header().Set("Content-Type", "application/json")
 
@@ -58,16 +61,23 @@ func (h *Handler) CreateUserByPhoneNumber(w http.ResponseWriter, r *http.Request
 		return apperror.BadRequestError("invalid JSON scheme. check swagger API")
 	}
 
-	userUUID, err := h.UserService.SignInByPhone(r.Context(), crUser)
+	response, err := h.UserService.SignInByPhone(r.Context(), crUser)
 	if err != nil {
 		return err
 	}
 	tmp := make(map[string]string)
-	tmp["id"] = userUUID
+	tmp["id"] = response.ID
 	bytes, err := json.Marshal(tmp)
 	if err != nil {
 		return fmt.Errorf("failed to marshal data: %v", err)
 	}
+
+	if response.IsNewUser {
+		w.WriteHeader(http.StatusCreated)
+	} else {
+		w.WriteHeader(http.StatusOK)
+	}
+
 	w.Write(bytes)
 	return nil
 }
@@ -78,10 +88,13 @@ func (h *Handler) CreateUserByPhoneNumber(w http.ResponseWriter, r *http.Request
 // @Produce json
 // @Param data body CreateByVkDTO true "structure holds data for user creation by vk"
 // @Tags Users
-// @Success 201
+// @Success 201 If new user has been signed in
+// @Success 200 If existing user has been signed in
 // @Failure 400 {object} apperror.AppError
 // @Router /api/v1/user_service/vk [post]
 func (h *Handler) CreateUserByVk(w http.ResponseWriter, r *http.Request) error {
+	// TODO: refactor
+
 	h.Logger.Info("CREATE USER")
 	w.Header().Set("Content-Type", "application/json")
 
@@ -91,16 +104,23 @@ func (h *Handler) CreateUserByVk(w http.ResponseWriter, r *http.Request) error {
 		return apperror.BadRequestError("invalid JSON scheme. check swagger API")
 	}
 
-	userUUID, err := h.UserService.SignInByVk(r.Context(), crUser)
+	response, err := h.UserService.SignInByVk(r.Context(), crUser)
 	if err != nil {
 		return err
 	}
 	tmp := make(map[string]string)
-	tmp["id"] = userUUID
+	tmp["id"] = response.ID
 	bytes, err := json.Marshal(tmp)
 	if err != nil {
 		return fmt.Errorf("failed to marshal data: %v", err)
 	}
+
+	if response.IsNewUser {
+		w.WriteHeader(http.StatusCreated)
+	} else {
+		w.WriteHeader(http.StatusOK)
+	}
+
 	w.Write(bytes)
 	return nil
 }

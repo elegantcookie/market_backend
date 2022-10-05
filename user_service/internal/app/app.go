@@ -35,8 +35,8 @@ func NewApp(cfg *config.Config, logger *logging.Logger) (App, error) {
 	router := httprouter.New()
 
 	logger.Println("swagger docs initialization")
-	router.Handler(http.MethodGet, "/swagger", http.RedirectHandler("/swagger/index.html", http.StatusMovedPermanently))
-	router.Handler(http.MethodGet, "/swagger/*any", httpSwagger.WrapHandler)
+	router.Handler(http.MethodGet, "/api/v1/user_service/docs", http.RedirectHandler("/api/v1/user_service/docs/index.html", http.StatusMovedPermanently))
+	router.Handler(http.MethodGet, "/api/v1/user_service/docs/*any", httpSwagger.WrapHandler)
 
 	logger.Println("heartbeat metric initializing")
 	metricHandler := metrics.Handler{}

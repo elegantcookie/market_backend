@@ -19,6 +19,7 @@ type service struct {
 type Service interface {
 	CreateJWT(r *http.Request, userID string) (tr CreateTokenResponse, err error)
 	CopyRequest(r *http.Request, dockerServiceName, servicePort string) (*http.Request, error)
+	GetURIWithPort(dockerServiceName, servicePort, requestURI string) string
 	DoRequest(r *http.Request) (*ResponseData, error)
 }
 
@@ -29,7 +30,7 @@ func NewService(logger logging.Logger) Service {
 }
 
 // Returns URI with service port e.g. http://host:port/path/to/endpoint
-func (s service) getURIWithPort(dockerServiceName, servicePort, requestURI string) string {
+func (s service) GetURIWithPort(dockerServiceName, servicePort, requestURI string) string {
 	// renders uri from docker service name, port and requested uri
 	url := fmt.Sprintf("http://%s:%s%s", dockerServiceName, servicePort, requestURI)
 	//s.logger.Logger.Printf("url: %s", url)
@@ -39,7 +40,7 @@ func (s service) getURIWithPort(dockerServiceName, servicePort, requestURI strin
 // CopyRequest copies the request so, that it can be redirected from api_gateway to another service
 // Applies requested method, copies body and sets "Content-Type" header to "application/json"
 func (s service) CopyRequest(r *http.Request, dockerServiceName, servicePort string) (*http.Request, error) {
-	url := s.getURIWithPort(dockerServiceName, servicePort, r.RequestURI)
+	url := s.GetURIWithPort(dockerServiceName, servicePort, r.RequestURI)
 
 	// if request method is GET then it doesn't add body
 	if r.Method == http.MethodGet {

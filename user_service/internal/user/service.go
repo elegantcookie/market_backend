@@ -29,8 +29,8 @@ func NewService(userStorage Storage, userCache Cache, logger logging.Logger) (Se
 }
 
 type Service interface {
-	SignInByPhone(ctx context.Context, dto CreateByPhoneDTO) (string, error)
-	SignInByVk(ctx context.Context, dto CreateByVkDTO) (string, error)
+	SignInByPhone(ctx context.Context, dto CreateByPhoneDTO) (SignInResponse, error)
+	SignInByVk(ctx context.Context, dto CreateByVkDTO) (SignInResponse, error)
 	SendCode(ctx context.Context, phoneNumber string) (string, error)
 	GetAll(ctx context.Context) ([]User, error)
 	GetById(ctx context.Context, uuid string) (User, error)
@@ -39,54 +39,62 @@ type Service interface {
 	Delete(ctx context.Context, uuid string) error
 }
 
-func (s service) SignInByPhone(ctx context.Context, dto CreateByPhoneDTO) (string, error) {
+func (s service) SignInByPhone(ctx context.Context, dto CreateByPhoneDTO) (res SignInResponse, err error) {
 	s.logger.Infof("dto: %+v", dto)
 	// Gets sent verification code from redis
 	val, err := s.cache.Get(ctx, dto.PhoneNumber)
 	if err != nil {
-		return "", fmt.Errorf("failed to create verification check: %v", err)
+		return res, fmt.Errorf("failed to create verification check: %v", err)
 	}
-	// Compares code is correct to one, sent by user
+
+	// Compares code to one, sent by user and checks if it's correct
 	if val != dto.VerificationCode {
 		// TODO remove right code from error message
-		return "", fmt.Errorf("wrong code, right one: %s", val)
+		return res, fmt.Errorf("wrong code, right one: %s", val)
 	}
 
 	// Returns id of the existing user if it is, instead of creating new one
 	if user, err := s.storage.FindByNumber(ctx, dto.PhoneNumber); err == nil {
-		return user.ID, nil
+		res = NewSignInResponse(user.ID, false)
+		return res, nil
 	}
+
 	// Returns id of a new user if it is not
 	user := NewUserByPhone(dto)
 	userID, err := s.storage.Create(ctx, user)
 	if err != nil {
-		return "", fmt.Errorf("failed to create user due to: %v", err)
+		return res, fmt.Errorf("failed to create user due to: %v", err)
 	}
 
-	return userID, nil
+	res = NewSignInResponse(userID, true)
+
+	return res, nil
 }
 
-func (s service) SignInByVk(ctx context.Context, dto CreateByVkDTO) (string, error) {
+func (s service) SignInByVk(ctx context.Context, dto CreateByVkDTO) (res SignInResponse, err error) {
 
 	// Returns error if token is invalid
 	vkID, err := s.CheckVkToken(ctx, dto.VkToken)
 	if err != nil {
-		return "", err
+		return res, err
 	}
 
 	// Returns id of the existing user if it is, instead of creating new one
 	if user, err := s.storage.FindByVkID(ctx, vkID); err == nil {
-		return user.ID, nil
+		res = NewSignInResponse(user.ID, false)
+		return res, nil
 	}
+
 	// Returns id of a new user if it is not
 	user := NewUserByVkID(dto)
 	user.VkID = vkID
 	userID, err := s.storage.Create(ctx, user)
 	if err != nil {
-		return "", fmt.Errorf("failed to create user due to: %v", err)
+		return res, fmt.Errorf("failed to create user due to: %v", err)
 	}
 
-	return userID, nil
+	res = NewSignInResponse(userID, true)
+	return res, nil
 }
 
 // For dev
@@ -109,12 +117,16 @@ func (s service) SendCode(ctx context.Context, phoneNumber string) (string, erro
 func (s service) CheckVkToken(ctx context.Context, token string) (string, error) {
 	var accessKey = os.Getenv("VK_ACCESS_TOKEN")
 	s.logger.Printf("VK_ACCESS_TOKEN: %s", accessKey)
+
 	url := fmt.Sprintf(checkTokenURL, token, accessKey, checkTokenVersion)
+
 	request, err := http.NewRequestWithContext(ctx, http.MethodGet, url, nil)
 	if err != nil {
 		return "", err
 	}
+
 	var client http.Client
+
 	response, err := client.Do(request)
 	if err != nil {
 		return "", err

@@ -55,6 +55,23 @@ type VkCheckTokenValue struct {
 	UserID  int   `json:"user_id"`
 }
 
+// A SignInResponse represents a model of response on user sign in
+type SignInResponse struct {
+
+	// ID is the id of the user
+	ID string
+
+	// IsNewUser returns true if user has been created by sign in function
+	IsNewUser bool
+}
+
+func NewSignInResponse(userID string, userNew bool) SignInResponse {
+	return SignInResponse{
+		ID:        userID,
+		IsNewUser: userNew,
+	}
+}
+
 func NewUserFromUpdateDTO(dto UpdateUserDTO) User {
 	return User{
 		ID:            dto.ID,

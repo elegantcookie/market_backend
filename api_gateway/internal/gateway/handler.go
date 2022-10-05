@@ -29,6 +29,7 @@ func (h *Handler) Register(router *httprouter.Router) {
 	router.HandlerFunc(http.MethodGet, user_service.GetUsersURL, apperror.AuthMiddleware(h.GetUsers))
 	router.HandlerFunc(http.MethodPut, user_service.UpdateByIdURL, apperror.Middleware(h.UpdateUser))
 	router.HandlerFunc(http.MethodDelete, user_service.DeleteByIdURL, apperror.Middleware(h.DeleteUser))
+	//router.HandlerFunc(http.MethodGet, user_service.DocsURL, apperror.Middleware(h.Docs))
 
 	/* =================================================================================================================
 		Auth service routes
@@ -211,6 +212,24 @@ func (h *Handler) DeleteUser(w http.ResponseWriter, r *http.Request) error {
 	return nil
 }
 
+//func (h *Handler) Docs(w http.ResponseWriter, r *http.Request) error {
+//	url := h.GatewayService.GetURIWithPort("user_service", user_service.Port, r.RequestURI)
+//	http.Redirect(w, r, url, 307)
+//	//request, err := h.GatewayService.CopyRequest(r, "user_service", user_service.Port)
+//	//if err != nil {
+//	//	return err
+//	//}
+//	//data, err := h.GatewayService.DoRequest(request)
+//	//
+//	//if err != nil {
+//	//	return err
+//	//}
+//	//w.Header().Add("Content-Type", "text/html")
+//	//w.WriteHeader(data.StatusCode)
+//	//w.Write(data.Body)
+//	return nil
+//}
+
 /* =====================================================================================================================
 	Auth service handlers
 ===================================================================================================================== */
@@ -230,7 +249,6 @@ func (h *Handler) AuthCheckToken(w http.ResponseWriter, r *http.Request) error {
 	w.Write(data.Body)
 	return nil
 }
-
 func (h *Handler) AuthCreateToken(w http.ResponseWriter, r *http.Request) error {
 	h.Logger.Println("CREATE TOKEN")
 	request, err := h.GatewayService.CopyRequest(r, auth_service.DockerName, auth_service.Port)
