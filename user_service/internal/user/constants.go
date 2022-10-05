@@ -5,7 +5,7 @@ import (
 )
 
 const (
-	deleteRegisterNumberTime = 5 * time.Minute
+	deleteRegisterNumberTime = 2 * time.Minute
 	twilioStatusApproved     = "approved"
 	verificationCodeLength   = 6
 	checkTokenURL            = "https://api.vk.com/method/secure.checkToken?token=%s&access_token=%s&v=%s"

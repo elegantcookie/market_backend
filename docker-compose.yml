@@ -56,7 +56,7 @@ services:
     image: 'mongo:5'
     restart: always
     volumes:
-      - ./mongo-volume:/data/db
+      - mongodb:/data/db
 #    networks:
 #      - some-network
 
@@ -64,10 +64,18 @@ services:
     image: redis
     ports:
       - "6379:6379"
-    command: redis-server --appendonly yes --replica-read-only no
+    command: redis-server --save 20 1 --appendonly yes --replica-read-only no
+    volumes:
+      - redis:/data
 #    networks:
 #      - some-network
 
 #networks:
 #  some-network:
 #    driver: bridge
+
+volumes:
+  redis:
+    driver: local
+  mongodb:
+    driver: local
