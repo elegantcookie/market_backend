@@ -41,8 +41,8 @@ type CreateByPhoneDTO struct {
 }
 
 type CreateByVkDTO struct {
-	PhoneNumber string `json:"phone_number"`
-	VkToken     string `json:"vk_token"`
+	// PhoneNumber string `json:"phone_number"`
+	VkToken string `json:"vk_token"`
 }
 type VkCheckTokenDTO struct {
 	Response VkCheckTokenValue `json:"response"`
@@ -96,7 +96,7 @@ func NewUserByPhone(dto CreateByPhoneDTO) User {
 
 func NewUserByVkID(dto CreateByVkDTO) User {
 	return User{
-		PhoneNumber:   dto.PhoneNumber,
+		// PhoneNumber:   dto.PhoneNumber,
 		PhoneApproved: true,
 		LastOnline:    time.Now().Unix(),
 	}
