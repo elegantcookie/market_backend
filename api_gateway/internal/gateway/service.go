@@ -21,6 +21,7 @@ type Service interface {
 	CopyRequest(r *http.Request, dockerServiceName, servicePort string) (*http.Request, error)
 	GetURIWithPort(dockerServiceName, servicePort, requestURI string) string
 	DoRequest(r *http.Request) (*ResponseData, error)
+	RedirectPartial(r *http.Request, dockerServiceName string, port string) (*ResponseData, error)
 }
 
 func NewService(logger logging.Logger) Service {
@@ -29,7 +30,7 @@ func NewService(logger logging.Logger) Service {
 	}
 }
 
-// Returns URI with service port e.g. http://host:port/path/to/endpoint
+// GetURIWithPort returns URI with service port e.g. http://host:port/path/to/endpoint
 func (s service) GetURIWithPort(dockerServiceName, servicePort, requestURI string) string {
 	// renders uri from docker service name, port and requested uri
 	url := fmt.Sprintf("http://%s:%s%s", dockerServiceName, servicePort, requestURI)
@@ -37,7 +38,7 @@ func (s service) GetURIWithPort(dockerServiceName, servicePort, requestURI strin
 	return url
 }
 
-// CopyRequest copies the request so, that it can be redirected from api_gateway to another service
+// CopyRequest copies the request so that it can be redirected from api_gateway to another service
 // Applies requested method, copies body and sets "Content-Type" header to "application/json"
 func (s service) CopyRequest(r *http.Request, dockerServiceName, servicePort string) (*http.Request, error) {
 	url := s.GetURIWithPort(dockerServiceName, servicePort, r.RequestURI)
@@ -52,7 +53,7 @@ func (s service) CopyRequest(r *http.Request, dockerServiceName, servicePort str
 		return request, nil
 	}
 
-	// copies given r request body
+	// copies given request body
 	bytes, err := io.ReadAll(r.Body)
 	if err != nil {
 		return nil, err
@@ -85,6 +86,21 @@ func (s service) DoRequest(r *http.Request) (data *ResponseData, err error) {
 		return nil, err
 	}
 	data = NewResponseData(bytes, response.StatusCode)
+	return data, nil
+}
+
+// RedirectPartial makes a redirect to a service, partially copying data from request and returns the response
+// Copying request data: request body, status code, method, headers
+func (s service) RedirectPartial(r *http.Request, dockerServiceName string, port string) (*ResponseData, error) {
+	request, err := s.CopyRequest(r, dockerServiceName, port)
+	if err != nil {
+		return nil, err
+	}
+
+	data, err := s.DoRequest(request)
+	if err != nil {
+		return nil, err
+	}
 	return data, nil
 }
 

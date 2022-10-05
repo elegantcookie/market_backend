@@ -45,14 +45,12 @@ func (h *Handler) Register(router *httprouter.Router) {
 
 func (h *Handler) CreateUserByPhoneNumber(w http.ResponseWriter, r *http.Request) error {
 	h.Logger.Println("CREATE USER BY PHONE NUMBER")
-	request, err := h.GatewayService.CopyRequest(r, "user_service", user_service.Port)
+
+	data, err := h.GatewayService.RedirectPartial(r, "user_service", user_service.Port)
 	if err != nil {
 		return err
 	}
-	data, err := h.GatewayService.DoRequest(request)
-	if err != nil {
-		return err
-	}
+
 	w.Header().Add("Content-Type", "application/json")
 	if data.StatusCode != http.StatusCreated && data.StatusCode != http.StatusOK {
 		w.WriteHeader(data.StatusCode)
@@ -82,11 +80,8 @@ func (h *Handler) CreateUserByPhoneNumber(w http.ResponseWriter, r *http.Request
 }
 func (h *Handler) CreateUserByVk(w http.ResponseWriter, r *http.Request) error {
 	h.Logger.Println("CREATE USER BY VK")
-	request, err := h.GatewayService.CopyRequest(r, "user_service", user_service.Port)
-	if err != nil {
-		return err
-	}
-	data, err := h.GatewayService.DoRequest(request)
+
+	data, err := h.GatewayService.RedirectPartial(r, "user_service", user_service.Port)
 	if err != nil {
 		return err
 	}
@@ -119,11 +114,8 @@ func (h *Handler) CreateUserByVk(w http.ResponseWriter, r *http.Request) error {
 }
 func (h *Handler) SendVerificationCode(w http.ResponseWriter, r *http.Request) error {
 	h.Logger.Println("SEND CODE")
-	request, err := h.GatewayService.CopyRequest(r, "user_service", user_service.Port)
-	if err != nil {
-		return err
-	}
-	data, err := h.GatewayService.DoRequest(request)
+
+	data, err := h.GatewayService.RedirectPartial(r, "user_service", user_service.Port)
 	if err != nil {
 		return err
 	}
@@ -133,12 +125,8 @@ func (h *Handler) SendVerificationCode(w http.ResponseWriter, r *http.Request) e
 }
 func (h *Handler) GetUserById(w http.ResponseWriter, r *http.Request) error {
 	h.Logger.Println("GET USER BY ID")
-	request, err := h.GatewayService.CopyRequest(r, "user_service", user_service.Port)
-	if err != nil {
-		return err
-	}
-	data, err := h.GatewayService.DoRequest(request)
 
+	data, err := h.GatewayService.RedirectPartial(r, "user_service", user_service.Port)
 	if err != nil {
 		return err
 	}
@@ -149,15 +137,12 @@ func (h *Handler) GetUserById(w http.ResponseWriter, r *http.Request) error {
 }
 func (h *Handler) GetUserByPhoneNumber(w http.ResponseWriter, r *http.Request) error {
 	h.Logger.Println("GET USER BY PHONE NUMBER")
-	request, err := h.GatewayService.CopyRequest(r, "user_service", user_service.Port)
-	if err != nil {
-		return err
-	}
-	data, err := h.GatewayService.DoRequest(request)
 
+	data, err := h.GatewayService.RedirectPartial(r, "user_service", user_service.Port)
 	if err != nil {
 		return err
 	}
+
 	w.Header().Add("Content-Type", "application/json")
 	w.WriteHeader(data.StatusCode)
 	w.Write(data.Body)
@@ -165,15 +150,12 @@ func (h *Handler) GetUserByPhoneNumber(w http.ResponseWriter, r *http.Request) e
 }
 func (h *Handler) GetUsers(w http.ResponseWriter, r *http.Request) error {
 	h.Logger.Println("GET USERS")
-	request, err := h.GatewayService.CopyRequest(r, "user_service", user_service.Port)
-	if err != nil {
-		return err
-	}
-	data, err := h.GatewayService.DoRequest(request)
 
+	data, err := h.GatewayService.RedirectPartial(r, "user_service", user_service.Port)
 	if err != nil {
 		return err
 	}
+
 	w.Header().Add("Content-Type", "application/json")
 	w.WriteHeader(data.StatusCode)
 	w.Write(data.Body)
@@ -181,15 +163,12 @@ func (h *Handler) GetUsers(w http.ResponseWriter, r *http.Request) error {
 }
 func (h *Handler) UpdateUser(w http.ResponseWriter, r *http.Request) error {
 	h.Logger.Println("UPDATE USER")
-	request, err := h.GatewayService.CopyRequest(r, "user_service", user_service.Port)
-	if err != nil {
-		return err
-	}
-	data, err := h.GatewayService.DoRequest(request)
 
+	data, err := h.GatewayService.RedirectPartial(r, "user_service", user_service.Port)
 	if err != nil {
 		return err
 	}
+
 	w.Header().Add("Content-Type", "application/json")
 	w.WriteHeader(data.StatusCode)
 	w.Write(data.Body)
@@ -197,15 +176,12 @@ func (h *Handler) UpdateUser(w http.ResponseWriter, r *http.Request) error {
 }
 func (h *Handler) DeleteUser(w http.ResponseWriter, r *http.Request) error {
 	h.Logger.Println("DELETE USER")
-	request, err := h.GatewayService.CopyRequest(r, "user_service", user_service.Port)
-	if err != nil {
-		return err
-	}
-	data, err := h.GatewayService.DoRequest(request)
 
+	data, err := h.GatewayService.RedirectPartial(r, "user_service", user_service.Port)
 	if err != nil {
 		return err
 	}
+
 	w.Header().Add("Content-Type", "application/json")
 	w.WriteHeader(data.StatusCode)
 	w.Write(data.Body)
@@ -236,11 +212,8 @@ func (h *Handler) DeleteUser(w http.ResponseWriter, r *http.Request) error {
 
 func (h *Handler) AuthCheckToken(w http.ResponseWriter, r *http.Request) error {
 	h.Logger.Println("CHECK TOKEN")
-	request, err := h.GatewayService.CopyRequest(r, auth_service.DockerName, auth_service.Port)
-	if err != nil {
-		return err
-	}
-	data, err := h.GatewayService.DoRequest(request)
+
+	data, err := h.GatewayService.RedirectPartial(r, auth_service.DockerName, auth_service.Port)
 	if err != nil {
 		return err
 	}
@@ -251,15 +224,12 @@ func (h *Handler) AuthCheckToken(w http.ResponseWriter, r *http.Request) error {
 }
 func (h *Handler) AuthCreateToken(w http.ResponseWriter, r *http.Request) error {
 	h.Logger.Println("CREATE TOKEN")
-	request, err := h.GatewayService.CopyRequest(r, auth_service.DockerName, auth_service.Port)
-	if err != nil {
-		return err
-	}
-	data, err := h.GatewayService.DoRequest(request)
 
+	data, err := h.GatewayService.RedirectPartial(r, auth_service.DockerName, auth_service.Port)
 	if err != nil {
 		return err
 	}
+
 	w.Header().Add("Content-Type", "application/json")
 	w.WriteHeader(data.StatusCode)
 	w.Write(data.Body)
