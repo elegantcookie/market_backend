@@ -17,7 +17,7 @@ type Handler struct {
 // Endpoints paths
 const (
 	createByPhoneNumberURL = "/api/v1/user_service/phone"
-	createByVkURL          = "/api/v1/user_service/vk"
+	createByVkURL          = "/api/v1/user_service/vk/:vk_token/"
 	sendVerificationURL    = "/api/v1/user_service/send_verification/:phone_number/"
 	getUsersURL            = "/api/v1/user_service/get/all"
 	getByIdURL             = "/api/v1/user_service/get/id/:id/"
@@ -86,25 +86,22 @@ func (h *Handler) CreateUserByPhoneNumber(w http.ResponseWriter, r *http.Request
 // @Summary Create user by phone number and token
 // @Accept json
 // @Produce json
-// @Param data body CreateByVkDTO true "structure holds data for user creation by vk"
+// @Param vk_token path string true "VK Access token"
 // @Tags Users
 // @Success 201 If new user has been signed in
 // @Success 200 If existing user has been signed in
 // @Failure 400 {object} apperror.AppError
-// @Router /api/v1/user_service/vk [post]
+// @Router /api/v1/user_service/vk/{vk_token}/ [post]
 func (h *Handler) CreateUserByVk(w http.ResponseWriter, r *http.Request) error {
 	// TODO: refactor
 
 	h.Logger.Info("CREATE USER")
 	w.Header().Set("Content-Type", "application/json")
 
-	var crUser CreateByVkDTO
-	defer r.Body.Close()
-	if err := json.NewDecoder(r.Body).Decode(&crUser); err != nil {
-		return apperror.BadRequestError("invalid JSON scheme. check swagger API")
-	}
+	params := r.Context().Value(httprouter.ParamsKey).(httprouter.Params)
+	vkToken := params.ByName("vk_token")
 
-	response, err := h.UserService.SignInByVk(r.Context(), crUser)
+	response, err := h.UserService.SignInByVk(r.Context(), vkToken)
 	if err != nil {
 		return err
 	}
@@ -133,7 +130,7 @@ func (h *Handler) CreateUserByVk(w http.ResponseWriter, r *http.Request) error {
 // @Tags Users
 // @Success 200
 // @Failure 400 {object} apperror.AppError
-// @Router /api/v1/user_service/send_verification/{phone_number} [get]
+// @Router /api/v1/user_service/send_verification/{phone_number}/ [get]
 func (h *Handler) SendVerificationCode(w http.ResponseWriter, r *http.Request) error {
 	h.Logger.Info("SEND CODE")
 	params := r.Context().Value(httprouter.ParamsKey).(httprouter.Params)
@@ -189,7 +186,7 @@ func (h *Handler) GetUserById(w http.ResponseWriter, r *http.Request) error {
 // @Tags Users
 // @Success 200
 // @Failure 400 {object} apperror.AppError
-// @Router /api/v1/user_service/get/id/{phone_number} [get]
+// @Router /api/v1/user_service/get/id/{phone_number}/ [get]
 func (h *Handler) GetUserByPhoneNumber(w http.ResponseWriter, r *http.Request) error {
 	w.Header().Set("Content-Type", "application/json")
 

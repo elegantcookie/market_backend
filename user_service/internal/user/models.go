@@ -40,10 +40,11 @@ type CreateByPhoneDTO struct {
 	VerificationCode string `json:"verification_code" example:"123321"`
 }
 
-type CreateByVkDTO struct {
-	// PhoneNumber string `json:"phone_number"`
-	VkToken string `json:"vk_token"`
-}
+//type CreateByVkDTO struct {
+//	PhoneNumber string `json:"phone_number"`
+//	VkToken     string `json:"vk_token"`
+//}
+
 type VkCheckTokenDTO struct {
 	Response VkCheckTokenValue `json:"response"`
 }
@@ -94,9 +95,9 @@ func NewUserByPhone(dto CreateByPhoneDTO) User {
 	}
 }
 
-func NewUserByVkID(dto CreateByVkDTO) User {
+func NewUserByVkID() User {
 	return User{
-		// PhoneNumber:   dto.PhoneNumber,
+		//PhoneNumber:   dto.PhoneNumber,
 		PhoneApproved: true,
 		LastOnline:    time.Now().Unix(),
 	}

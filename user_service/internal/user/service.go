@@ -30,7 +30,7 @@ func NewService(userStorage Storage, userCache Cache, logger logging.Logger) (Se
 
 type Service interface {
 	SignInByPhone(ctx context.Context, dto CreateByPhoneDTO) (SignInResponse, error)
-	SignInByVk(ctx context.Context, dto CreateByVkDTO) (SignInResponse, error)
+	SignInByVk(ctx context.Context, vkToken string) (SignInResponse, error)
 	SendCode(ctx context.Context, phoneNumber string) (string, error)
 	GetAll(ctx context.Context) ([]User, error)
 	GetById(ctx context.Context, uuid string) (User, error)
@@ -71,10 +71,10 @@ func (s service) SignInByPhone(ctx context.Context, dto CreateByPhoneDTO) (res S
 	return res, nil
 }
 
-func (s service) SignInByVk(ctx context.Context, dto CreateByVkDTO) (res SignInResponse, err error) {
+func (s service) SignInByVk(ctx context.Context, vkToken string) (res SignInResponse, err error) {
 
 	// Returns error if token is invalid
-	vkID, err := s.CheckVkToken(ctx, dto.VkToken)
+	vkID, err := s.CheckVkToken(ctx, vkToken)
 	if err != nil {
 		return res, err
 	}
@@ -86,7 +86,7 @@ func (s service) SignInByVk(ctx context.Context, dto CreateByVkDTO) (res SignInR
 	}
 
 	// Returns id of a new user if it is not
-	user := NewUserByVkID(dto)
+	user := NewUserByVkID()
 	user.VkID = vkID
 	userID, err := s.storage.Create(ctx, user)
 	if err != nil {
