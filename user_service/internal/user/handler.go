@@ -29,7 +29,7 @@ const (
 // Register adds handler functions to endpoints
 func (h *Handler) Register(router *httprouter.Router) {
 	router.HandlerFunc(http.MethodPost, createByPhoneNumberURL, apperror.Middleware(h.CreateUserByPhoneNumber))
-	router.HandlerFunc(http.MethodPost, createByVkURL, apperror.Middleware(h.CreateUserByVk))
+	router.HandlerFunc(http.MethodGet, createByVkURL, apperror.Middleware(h.CreateUserByVk))
 	router.HandlerFunc(http.MethodGet, sendVerificationURL, apperror.Middleware(h.SendVerificationCode))
 	router.HandlerFunc(http.MethodGet, getByIdURL, apperror.Middleware(h.GetUserById))
 	router.HandlerFunc(http.MethodGet, getByPhoneNumberURL, apperror.Middleware(h.GetUserByPhoneNumber))
