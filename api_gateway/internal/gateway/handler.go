@@ -22,7 +22,7 @@ func (h *Handler) Register(router *httprouter.Router) {
 		User service routes
 	================================================================================================================= */
 	router.HandlerFunc(http.MethodPost, user_service.CreateByPhoneNumberURL, apperror.Middleware(h.CreateUserByPhoneNumber))
-	router.HandlerFunc(http.MethodPost, user_service.CreateByVkURL, apperror.Middleware(h.CreateUserByVk))
+	router.HandlerFunc(http.MethodGet, user_service.CreateByVkURL, apperror.Middleware(h.CreateUserByVk))
 	router.HandlerFunc(http.MethodGet, user_service.SendVerificationURL, apperror.Middleware(h.SendVerificationCode))
 	router.HandlerFunc(http.MethodGet, user_service.GetByIdURL, apperror.Middleware(h.GetUserById))
 	router.HandlerFunc(http.MethodGet, user_service.GetByPhoneNumberURL, apperror.Middleware(h.GetUserByPhoneNumber))

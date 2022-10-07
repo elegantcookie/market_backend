@@ -5,10 +5,12 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	openapi "github.com/twilio/twilio-go/rest/api/v2010"
 	"net/http"
 	"os"
 	"strconv"
 	"user_service/internal/apperror"
+	"user_service/pkg/client/twilio"
 	"user_service/pkg/logging"
 )
 
@@ -98,21 +100,21 @@ func (s service) SignInByVk(ctx context.Context, vkToken string) (res SignInResp
 }
 
 // For dev
-func (s service) SendCode(ctx context.Context, phoneNumber string) (string, error) {
-	s.logger.Info("SEND CODE SERVICE")
-
-	code := generateVerificationCode(verificationCodeLength)
-
-	// Fills verificationMessage template with code
-	message := fmt.Sprintf(verificationMessage, code)
-
-	// Adds to cache phoneNumber as a key and right code as a value to compare at SignInByPhone
-	err := s.cache.Set(ctx, phoneNumber, code, deleteRegisterNumberTime)
-	if err != nil {
-		return "", err
-	}
-	return message, nil
-}
+//func (s service) SendCode(ctx context.Context, phoneNumber string) (string, error) {
+//	s.logger.Info("SEND CODE SERVICE")
+//
+//	code := generateVerificationCode(verificationCodeLength)
+//
+//	// Fills verificationMessage template with code
+//	message := fmt.Sprintf(verificationMessage, code)
+//
+//	// Adds to cache phoneNumber as a key and right code as a value to compare at SignInByPhone
+//	err := s.cache.Set(ctx, phoneNumber, code, deleteRegisterNumberTime)
+//	if err != nil {
+//		return "", err
+//	}
+//	return message, nil
+//}
 
 func (s service) CheckVkToken(ctx context.Context, token string) (string, error) {
 	var accessKey = os.Getenv("VK_ACCESS_TOKEN")
@@ -150,43 +152,43 @@ func (s service) CheckVkToken(ctx context.Context, token string) (string, error)
 }
 
 // For prod
-//func (s service) SendCode(ctx context.Context, phoneNumber string) error {
-//	s.logger.Info("SEND CODE SERVICE")
-//
-//	// Initializes twilio client
-//	client := twilio.GetClient()
-//	s.logger.Info("SET UP CLIENT")
-//
-//	// Adds params:
-//	// SetTo arg - number of user, will be sending verification code
-//	// SetFrom arg - twilio number from account
-//	params := &openapi.CreateMessageParams{}
-//	params.SetTo(phoneNumber)
-//	params.SetFrom(client.FromPhone)
-//
-//	code := generateVerificationCode(verificationCodeLength)
-//
-//	// Fills verificationMessage template with code
-//	message := fmt.Sprintf(verificationMessage, code)
-//
-//	// Sets message text to be sent
-//	params.SetBody(message)
-//
-//	// Creates message via twilio api
-//	resp, err := client.TwilioClient.Api.CreateMessage(params)
-//	if err != nil {
-//		s.logger.Infof("failed to create verification: %v", err)
-//		return fmt.Errorf("failed to create verification: %v", err)
-//	}
-//
-//	// Adds to cache phoneNumber as a key and right code as a value to compare at SignInByPhone
-//	err = s.cache.Set(ctx, phoneNumber, code, deleteRegisterNumberTime)
-//	if err != nil {
-//		return err
-//	}
-//	s.logger.Infof("Sent notification: %+v", resp)
-//	return nil
-//}
+func (s service) SendCode(ctx context.Context, phoneNumber string) (string, error) {
+	s.logger.Info("SEND CODE SERVICE")
+
+	// Initializes twilio client
+	client := twilio.GetClient()
+	s.logger.Info("SET UP CLIENT")
+
+	// Adds params:
+	// SetTo arg - number of user, will be sending verification code
+	// SetFrom arg - twilio number from account
+	params := &openapi.CreateMessageParams{}
+	params.SetTo(phoneNumber)
+	params.SetFrom(client.FromPhone)
+
+	code := generateVerificationCode(verificationCodeLength)
+
+	// Fills verificationMessage template with code
+	message := fmt.Sprintf(verificationMessage, code)
+
+	// Sets message text to be sent
+	params.SetBody(message)
+
+	// Creates message via twilio api
+	resp, err := client.TwilioClient.Api.CreateMessage(params)
+	if err != nil {
+		s.logger.Infof("failed to create verification: %v", err)
+		return "", fmt.Errorf("failed to create verification: %v", err)
+	}
+
+	// Adds to cache phoneNumber as a key and right code as a value to compare at SignInByPhone
+	err = s.cache.Set(ctx, phoneNumber, code, deleteRegisterNumberTime)
+	if err != nil {
+		return "", err
+	}
+	s.logger.Infof("Sent notification: %+v", resp)
+	return message, nil
+}
 
 func (s service) GetAll(ctx context.Context) ([]User, error) {
 	users, err := s.storage.FindAll(ctx)
